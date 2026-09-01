@@ -69,13 +69,14 @@ export function getDatabaseUrl() {
 
 export function getServiceConfiguration() {
   const environment = getServerEnvironment();
+  const supabaseConfigured =
+    Boolean(environment.NEXT_PUBLIC_SUPABASE_URL) &&
+    Boolean(environment.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY);
 
   return {
-    supabase:
-      Boolean(environment.NEXT_PUBLIC_SUPABASE_URL) &&
-      Boolean(environment.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY),
+    supabase: supabaseConfigured,
     database: Boolean(environment.DATABASE_URL),
-    storage: Boolean(environment.SUPABASE_STORAGE_BUCKET),
+    storage: supabaseConfigured && Boolean(environment.SUPABASE_STORAGE_BUCKET),
     demoMode: environment.DEMO_MODE === "true",
   };
 }

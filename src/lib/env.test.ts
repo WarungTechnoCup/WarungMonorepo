@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
   ConfigurationError,
+  getDatabaseUrl,
   getServiceConfiguration,
   getSupabasePublicConfig,
 } from "@/lib/env";
@@ -19,7 +20,7 @@ describe("environment contract", () => {
     expect(getServiceConfiguration()).toMatchObject({
       supabase: false,
       database: false,
-      storage: true,
+      storage: false,
       demoMode: false,
     });
   });
@@ -40,5 +41,17 @@ describe("environment contract", () => {
       url: "https://example.supabase.co",
       publishableKey: "test-publishable-key",
     });
+    expect(getServiceConfiguration()).toMatchObject({
+      supabase: true,
+      storage: true,
+    });
+  });
+
+  it("requires and returns the database pooler URL", () => {
+    vi.stubEnv("DATABASE_URL", "");
+    expect(() => getDatabaseUrl()).toThrow(ConfigurationError);
+
+    vi.stubEnv("DATABASE_URL", "postgresql://user:password@example.com/db");
+    expect(getDatabaseUrl()).toBe("postgresql://user:password@example.com/db");
   });
 });

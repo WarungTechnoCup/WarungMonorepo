@@ -15,7 +15,7 @@ const principles = [
 export default function Home() {
   return (
     <>
-      <section className="border-ink/10 border-b">
+      <section className="border-ink/10 overflow-hidden border-b">
         <div className="page-shell grid min-h-[calc(100svh-5rem)] items-center gap-12 py-16 lg:grid-cols-[1.1fr_0.9fr] lg:py-24">
           <div className="max-w-3xl">
             <p className="eyebrow">Fondasi produk, milestone scaffold</p>
@@ -79,6 +79,7 @@ export default function Home() {
                   <div
                     aria-label="Data belum mencapai ambang lima kontributor"
                     className="bg-ink/8 h-3 overflow-hidden rounded-full"
+                    role="img"
                   >
                     <div className="bg-accent h-full w-2/5 rounded-full" />
                   </div>

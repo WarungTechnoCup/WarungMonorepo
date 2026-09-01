@@ -20,7 +20,7 @@ describe("GET /api/health", () => {
         services: {
           supabase: false,
           database: false,
-          storage: true,
+          storage: false,
           demoMode: false,
         },
       },
