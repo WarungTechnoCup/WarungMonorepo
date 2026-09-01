@@ -1,0 +1,85 @@
+# Architecture
+
+## Product boundary
+
+Warung Cek Harga turns verified community price observations into a privacy-preserving benchmark and then into coordinated purchasing options. Harga Wajar, verified contribution, and Kulakan Bareng form the MVP. Warung Pulse remains roadmap. Passport remains a constrained preview.
+
+## Runtime
+
+```text
+Browser
+  -> Next.js App Router and Server Components
+  -> server validation and access boundary
+  -> Supabase Auth, PostgreSQL, and private Storage
+  -> Drizzle schema and versioned SQL migrations
+```
+
+Public, authenticated, and admin routes remain explicit. `src/proxy.ts` refreshes cookie-based sessions and fails closed for `/lapor-harga`, `/aktivitas`, `/passport`, and `/admin`. Missing configuration redirects to an actionable Bahasa Indonesia message. Public routes and builds do not require external credentials.
+
+## Feature slices
+
+- **Discover:** catalog, search, benchmark, product detail, methodology.
+- **Contribute:** auth, price report, normalization, trust, activity, Passport preview.
+- **Act:** group buying, commitments, integration, and demo readiness.
+
+Each slice exposes a public interface. A slice must not import another slice's internals. Cross-slice orchestration belongs in an application service or route boundary.
+
+## Domain boundaries
+
+- `catalog`: canonical product and package identity.
+- `price-report`: a private observation with source metadata and consent.
+- `normalization`: pure unit and package conversion.
+- `trust`: pure confidence inputs plus reviewed policy.
+- `benchmark`: privacy-safe aggregate based on independent contributors.
+- `buying`: opportunities, interest, commitments, and supplier quotes.
+- `consent`: purpose-specific grants and withdrawals.
+- `passport`: restricted derived summaries, never a public profile.
+
+Supplier quotes must never be included in community benchmark calculations. Normalization and confidence calculations stay deterministic and side-effect free.
+
+## Kontrak lingkungan
+
+`.env.example` is the complete contract. Environment parsing is lazy so public builds work without Supabase. Protected operations throw `ConfigurationError` with an actionable message.
+
+| Variable                               | Scope  | Purpose                                                            |
+| -------------------------------------- | ------ | ------------------------------------------------------------------ |
+| `NEXT_PUBLIC_APP_URL`                  | Public | Canonical application URL                                          |
+| `NEXT_PUBLIC_SUPABASE_URL`             | Public | Supabase project URL                                               |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Public | Browser-safe publishable key                                       |
+| `DATABASE_URL`                         | Server | Supabase transaction pooler URL                                    |
+| `SUPABASE_STORAGE_BUCKET`              | Server | Private receipt bucket name                                        |
+| `DEMO_MODE`                            | Server | Explicit local demonstration mode, never production access control |
+
+Do not add a service-role key to browser-prefixed variables. Secrets must remain outside Git.
+
+## Data dan migrasi
+
+`src/db/schema.ts` is intentionally empty during scaffolding. `src/db/client.ts` uses the Supabase transaction pooler through `postgres` with prepared statements disabled. Drizzle writes reviewable SQL to `drizzle/`.
+
+Schema changes require:
+
+1. team coordination for shared indexes;
+2. an update to the Drizzle schema;
+3. `pnpm db:generate` and review of generated SQL;
+4. tests for constraints, ownership, and row-level security;
+5. an architecture and progress update.
+
+Applied migrations are append-only. Seed data is synthetic and labeled as demo data.
+
+## Kontrak API
+
+Successful responses use `ApiSuccess<T>` with `data` and optional `meta`. Failures use `ApiFailure` with a stable `code`, Bahasa Indonesia `message`, optional field errors, and a request ID. Public response fields must be allowlisted.
+
+`GET /api/health` returns version and boolean configuration status. It never returns URLs, keys, connection strings, bucket contents, or environment values.
+
+## Storage and privacy
+
+Receipt storage will use a private bucket, non-guessable object paths, short-lived signed access, explicit retention, and server-side authorization. No receipt workflow may ship before row-level policies and cross-user tests pass. Passport data receives the same sensitive-data treatment.
+
+## Offline behavior
+
+The manifest and `/offline` route exist. Service-worker caching is pending because session, receipt, Passport, and cross-user response rules must be classified first.
+
+## Deployment
+
+Vercel is the planned hosting target. Separate Supabase development and production environments will be created later. No deployment or remote resource exists in the scaffold milestone.

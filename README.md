@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Warung Cek Harga
 
-## Getting Started
+Warung Cek Harga adalah fondasi intelijen pengadaan untuk membantu pemilik warung memahami harga wajar, menyumbangkan bukti harga secara aman, dan membentuk daya beli melalui Kulakan Bareng. Proyek ini mengangkat SDG 8 sebagai fokus utama dan SDG 9 sebagai pendukung.
 
-First, run the development server:
+Status saat ini adalah **scaffold**. Rute, kontrak lingkungan, adapter, quality gates, dan dokumentasi tim sudah tersedia. Autentikasi, database domain, benchmark, kontribusi harga, pembelian bersama, Passport, dan deployment belum diimplementasikan.
+
+## Pembeda utama
+
+- **Harga Wajar:** benchmark komunitas yang baru tampil setelah sedikitnya lima kontributor independen.
+- **Kontribusi terverifikasi:** fondasi untuk bukti transaksi, normalisasi, dan sinyal kepercayaan tanpa membuka identitas warung.
+- **Kulakan Bareng:** jalur dari informasi harga menuju koordinasi daya beli, dengan kutipan pemasok tetap terpisah dari benchmark komunitas.
+- **Passport:** preview terbatas untuk ringkasan kontribusi yang membutuhkan persetujuan dan perlindungan tambahan.
+
+## Teknologi dan tujuannya
+
+| Teknologi                        | Tujuan                                                      |
+| -------------------------------- | ----------------------------------------------------------- |
+| Next.js 16, React 19, TypeScript | Antarmuka App Router, rendering server, dan kontrak tipe    |
+| Tailwind CSS 4                   | Sistem visual mobile-first dengan komponen milik proyek     |
+| Supabase                         | PostgreSQL, autentikasi berbasis cookie, dan Storage privat |
+| Drizzle ORM                      | Schema bertipe dan migrasi SQL yang dapat ditinjau          |
+| Vitest dan Playwright            | Pengujian unit, kontrak, akses, dan alur pengguna           |
+
+## Menjalankan lokal
+
+Prasyarat: Node.js 24 dan pnpm 11.19.0.
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install --frozen-lockfile
+copy .env.example .env.local
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Buka `http://localhost:3000`. Aplikasi publik dapat dibangun tanpa kredensial Supabase. Rute terlindungi akan dialihkan ke halaman masuk dengan pesan konfigurasi sampai Supabase tersedia.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm check
+pnpm test:e2e
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Penggunaan scaffold
 
-## Learn More
+1. Buka beranda untuk melihat tesis produk dan status MVP.
+2. Buka `/cek-harga`, `/produk/minyak-goreng-1-l`, atau `/kulakan-bareng` untuk memeriksa shell publik.
+3. Buka `/api/health` untuk melihat versi dan status konfigurasi layanan tanpa secret.
+4. Ikuti [CONTRIBUTING.md](CONTRIBUTING.md) sebelum mengerjakan slice fitur.
 
-To learn more about Next.js, take a look at the following resources:
+## Dokumentasi
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Persyaratan kompetisi](docs/competition-requirements.md)
+- [Arsitektur](docs/architecture.md)
+- [Workflow tiga anggota](docs/team-workflow.md)
+- [Schema dan migrasi](docs/architecture.md#data-dan-migrasi)
+- [Lingkungan dan adapter](docs/architecture.md#kontrak-lingkungan)
+- [Kontrak API](docs/architecture.md#kontrak-api)
+- [Pengujian](CONTRIBUTING.md#pemeriksaan-wajib)
+- [Privasi](docs/privacy.md)
+- [Metodologi](docs/methodology.md)
+- [Penggunaan AI](docs/ai-usage.md)
+- [Demo dan deployment](docs/demo-script.md)
+- [Progress](docs/progress.md)
+- [Lisensi MIT](LICENSE)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Screenshot dan URL deployment akan ditambahkan setelah UI produk dan lingkungan hosting tersedia. Instruksi submission ada pada [tracker kompetisi](docs/competition-requirements.md#checklist-submission).
