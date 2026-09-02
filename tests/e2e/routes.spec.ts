@@ -38,13 +38,16 @@ for (const route of publicRoutes) {
 }
 
 for (const route of protectedRoutes) {
-  test(`${route} fails closed without Supabase configuration`, async ({
-    page,
-  }) => {
+  test(`${route} fails closed when unauthenticated`, async ({ page }) => {
     await page.goto(route);
 
-    await expect(page).toHaveURL(/\/masuk\?status=konfigurasi/);
-    await expect(page.getByText("Supabase belum dikonfigurasi")).toBeVisible();
+    await expect(page).toHaveURL(/\/masuk\?status=(konfigurasi|autentikasi)/);
+
+    if (new URL(page.url()).searchParams.get("status") === "konfigurasi") {
+      await expect(
+        page.getByText("Supabase belum dikonfigurasi"),
+      ).toBeVisible();
+    }
   });
 }
 

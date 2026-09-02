@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { fetchApi } from "@/lib/api-client";
 import { formatDate, formatRupiah } from "@/lib/format";
@@ -18,19 +18,48 @@ export function ActivityList() {
   const [items, setItems] = useState<ActivityItemDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [withdrawingId, setWithdrawingId] = useState<string | null>(null);
+
+  const loadItems = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      setItems(await fetchApi<ActivityItemDto[]>("/api/price-reports/mine"));
+    } catch (loadError) {
+      setError(
+        loadError instanceof Error
+          ? loadError.message
+          : "Aktivitas tidak dapat dimuat.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    fetchApi<ActivityItemDto[]>("/api/price-reports/mine")
-      .then(setItems)
-      .catch((loadError: unknown) => {
-        setError(
-          loadError instanceof Error
-            ? loadError.message
-            : "Aktivitas tidak dapat dimuat.",
-        );
-      })
-      .finally(() => setLoading(false));
-  }, []);
+    void Promise.resolve().then(loadItems);
+  }, [loadItems]);
+
+  async function withdrawAggregation(item: ActivityItemDto) {
+    setWithdrawingId(item.id);
+    setError(null);
+    try {
+      await fetchApi(`/api/price-reports/${item.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "withdraw_aggregation" }),
+      });
+      await loadItems();
+    } catch (withdrawalError) {
+      setError(
+        withdrawalError instanceof Error
+          ? withdrawalError.message
+          : "Laporan tidak dapat ditarik dari benchmark.",
+      );
+    } finally {
+      setWithdrawingId(null);
+    }
+  }
 
   return (
     <div className="page-shell py-14 sm:py-20">
@@ -89,6 +118,18 @@ export function ActivityList() {
                 {formatRupiah(item.unitPriceIdr)}
               </p>
               <p className="text-ink-muted mt-1 text-xs">per unit dasar</p>
+              {item.status === "included" ? (
+                <button
+                  className="secondary-action mt-4"
+                  disabled={withdrawingId === item.id}
+                  onClick={() => void withdrawAggregation(item)}
+                  type="button"
+                >
+                  {withdrawingId === item.id
+                    ? "Menarik laporan..."
+                    : "Tarik dari benchmark"}
+                </button>
+              ) : null}
             </div>
           </article>
         ))}

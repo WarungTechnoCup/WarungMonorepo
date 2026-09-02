@@ -3,6 +3,10 @@ import postgres from "postgres";
 
 import { getDatabaseUrl } from "@/lib/env";
 
+type DatabaseClient = ReturnType<typeof drizzle>;
+
+let databaseClient: DatabaseClient | undefined;
+
 export function createDatabaseConnection() {
   const queryClient = postgres(getDatabaseUrl(), {
     max: 1,
@@ -15,6 +19,10 @@ export function createDatabaseConnection() {
   };
 }
 
-export function createDatabaseClient() {
-  return createDatabaseConnection().db;
+export function getDatabaseClient() {
+  if (!databaseClient) {
+    databaseClient = createDatabaseConnection().db;
+  }
+
+  return databaseClient;
 }

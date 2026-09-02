@@ -5,6 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { GET as getBenchmarks } from "@/app/api/benchmarks/route";
 import { GET as getMine } from "@/app/api/price-reports/mine/route";
+import { PATCH as withdrawReport } from "@/app/api/price-reports/[id]/route";
 import { POST as previewNormalization } from "@/app/api/price-reports/preview-normalization/route";
 import { POST as submitReport } from "@/app/api/price-reports/route";
 import { GET as getProduct } from "@/app/api/products/[id]/route";
@@ -17,6 +18,7 @@ import {
   listProducts,
   previewNormalization as loadNormalization,
   submitPriceReport,
+  withdrawPriceReport,
 } from "@/server/harga-wajar/repository";
 
 vi.mock("@/server/auth", () => ({
@@ -31,6 +33,7 @@ vi.mock("@/server/harga-wajar/repository", () => ({
   listProducts: vi.fn(),
   previewNormalization: vi.fn(),
   submitPriceReport: vi.fn(),
+  withdrawPriceReport: vi.fn(),
 }));
 
 const productId = "10000000-0000-4000-8000-000000000001";
@@ -204,5 +207,34 @@ describe("Harga Wajar API contracts", () => {
     expect(listOwnReports).toHaveBeenCalledWith(
       "90000000-0000-4000-8000-000000000001",
     );
+  });
+
+  it("withdraws aggregation only for the authenticated report owner", async () => {
+    vi.mocked(withdrawPriceReport).mockResolvedValue({
+      reportId: "80000000-0000-4000-8000-000000000001",
+      status: "excluded",
+      reasonCode: "AGGREGATION_CONSENT_WITHDRAWN",
+    });
+    const response = await withdrawReport(
+      new Request(
+        "http://localhost/api/price-reports/80000000-0000-4000-8000-000000000001",
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "withdraw_aggregation" }),
+        },
+      ),
+      {
+        params: Promise.resolve({
+          id: "80000000-0000-4000-8000-000000000001",
+        }),
+      },
+    );
+
+    expect(response.status).toBe(200);
+    expect(withdrawPriceReport).toHaveBeenCalledWith({
+      authUserId: "90000000-0000-4000-8000-000000000001",
+      reportId: "80000000-0000-4000-8000-000000000001",
+    });
   });
 });

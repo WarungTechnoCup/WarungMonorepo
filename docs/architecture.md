@@ -54,7 +54,7 @@ Do not add a service-role key to browser-prefixed variables. Secrets must remain
 
 ## Data dan migrasi
 
-`src/db/schema.ts` now defines the first Harga Wajar domain tables: warungs, products, packaging options, reports, normalized observations, benchmarks, consents, receipt metadata, and audit events. `src/db/client.ts` uses the Supabase transaction pooler through `postgres` with prepared statements disabled. Drizzle writes reviewable SQL to `drizzle/`.
+`src/db/schema.ts` now defines the first Harga Wajar domain tables: warungs, products, packaging options, reports, normalized observations, benchmarks, consents, receipt metadata, and audit events. `src/db/client.ts` uses one lazy, process-level client through the Supabase transaction pooler with prepared statements disabled. Drizzle writes reviewable SQL to `drizzle/`.
 
 Migration `0000_spotty_surge.sql` enables RLS on every domain table, forces RLS on private tables, revokes direct access to operational records, and grants anonymous access only to active catalog data and aggregate benchmarks. A database constraint prevents median and range publication below five independent warungs.
 
@@ -76,7 +76,7 @@ Successful responses use `ApiSuccess<T>` with `data` and optional `meta`. Failur
 
 Harga Wajar exposes public product and benchmark reads plus authenticated normalization preview, idempotent report submission, and owner activity reads. Public benchmark responses are a discriminated union: `insufficient` never contains price statistics, while `available` contains only aggregate median, interquartile range, counts, recency, confidence, and calculation version.
 
-Report submission validates with Zod, resolves the canonical package, normalizes landed cost, detects duplicates and IQR anomalies, persists consent and an audit event, and recomputes the scoped benchmark. Database records remain the only data source for the UI.
+Report submission validates with Zod, resolves the canonical package, normalizes landed cost, detects duplicates and IQR anomalies, persists consent and an audit event, and recomputes the scoped benchmark in one database transaction. A contributor can withdraw aggregation consent from activity, which excludes their observation and recomputes the affected benchmark. Database records remain the only data source for the UI.
 
 ## Storage and privacy
 

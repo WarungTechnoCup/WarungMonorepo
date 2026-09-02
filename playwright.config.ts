@@ -1,4 +1,23 @@
+import { existsSync, readFileSync } from "node:fs";
 import { defineConfig, devices } from "@playwright/test";
+
+const localEnvPath = ".env.local";
+
+if (existsSync(localEnvPath)) {
+  for (const line of readFileSync(localEnvPath, "utf8").split("\n")) {
+    const separator = line.indexOf("=");
+
+    if (separator <= 0) {
+      continue;
+    }
+
+    const key = line.slice(0, separator).trim();
+
+    if (!key.startsWith("#") && process.env[key] === undefined) {
+      process.env[key] = line.slice(separator + 1).trim();
+    }
+  }
+}
 
 export default defineConfig({
   testDir: "./tests/e2e",

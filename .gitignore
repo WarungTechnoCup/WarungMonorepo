@@ -34,6 +34,9 @@ yarn-error.log*
 .env*
 !.env.example
 
+# Supabase CLI local project linkage
+supabase/.temp/
+
 # playwright
 /playwright-report/
 /test-results/

@@ -5,14 +5,12 @@ import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 import { BenchmarkCard } from "@/components/benchmark-card";
+import {
+  defaultCoarseLocation,
+  LocationSelector,
+} from "@/components/location-selector";
 import { fetchApi } from "@/lib/api-client";
 import type { BenchmarkDto, ProductDto } from "@/types/harga-wajar";
-
-const defaultArea = {
-  province: "DKI Jakarta",
-  city: "Jakarta Barat",
-  district: "Kebon Jeruk",
-};
 
 export function PriceSearch() {
   const [query, setQuery] = useState("");
@@ -21,6 +19,7 @@ export function PriceSearch() {
     null,
   );
   const [benchmark, setBenchmark] = useState<BenchmarkDto | null>(null);
+  const [area, setArea] = useState(defaultCoarseLocation);
   const [windowDays, setWindowDays] = useState(30);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -74,7 +73,7 @@ export function PriceSearch() {
 
     const parameters = new URLSearchParams({
       productId: selectedProduct.id,
-      ...defaultArea,
+      ...area,
       windowDays: String(windowDays),
     });
     fetchApi<BenchmarkDto>(`/api/benchmarks?${parameters}`)
@@ -88,7 +87,7 @@ export function PriceSearch() {
         );
       })
       .finally(() => setLoading(false));
-  }, [selectedProduct, windowDays]);
+  }, [area, selectedProduct, windowDays]);
 
   return (
     <div className="page-shell py-14 sm:py-20">
@@ -125,6 +124,10 @@ export function PriceSearch() {
           Cari produk
         </button>
       </form>
+
+      <div className="border-ink/12 bg-paper mt-4 rounded-2xl border p-4">
+        <LocationSelector onChange={setArea} value={area} />
+      </div>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[0.8fr_1.2fr]">
         <section>
@@ -174,7 +177,7 @@ export function PriceSearch() {
                 {selectedProduct?.name ?? "Pilih produk"}
               </h2>
               <p className="text-ink-muted mt-1 text-sm">
-                Kebon Jeruk, Jakarta Barat
+                {area.district}, {area.city}
               </p>
             </div>
             <select

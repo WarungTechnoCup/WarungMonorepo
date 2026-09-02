@@ -1,6 +1,6 @@
-import { and, desc, eq, gte, ilike, inArray, or } from "drizzle-orm";
+import { and, desc, eq, gte, ilike, inArray, isNull, or } from "drizzle-orm";
 
-import { createDatabaseClient } from "@/db/client";
+import { getDatabaseClient } from "@/db/client";
 import {
   auditEvents,
   benchmarks,
@@ -31,13 +31,17 @@ import type {
 } from "@/types/harga-wajar";
 
 const DEFAULT_WINDOW_DAYS = 30;
+type DatabaseExecutor = Pick<
+  ReturnType<typeof getDatabaseClient>,
+  "select" | "insert"
+>;
 
 function reportReference(id: string) {
   return `WCH-${id.slice(0, 8).toUpperCase()}`;
 }
 
 export async function listProducts(query = ""): Promise<ProductDto[]> {
-  const db = createDatabaseClient();
+  const db = getDatabaseClient();
   const normalizedQuery = query.trim();
   const rows = await db
     .select()
@@ -91,7 +95,7 @@ export async function listProducts(query = ""): Promise<ProductDto[]> {
 }
 
 export async function getProduct(identifier: string) {
-  const db = createDatabaseClient();
+  const db = getDatabaseClient();
   const isUuid =
     /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
       identifier,
@@ -134,14 +138,17 @@ export async function getProduct(identifier: string) {
   } satisfies ProductDto;
 }
 
-export async function getBenchmark(input: {
-  productId: string;
-  province: string;
-  city: string;
-  district: string;
-  windowDays?: number;
-}): Promise<BenchmarkDto> {
-  const db = createDatabaseClient();
+export async function getBenchmark(
+  input: {
+    productId: string;
+    province: string;
+    city: string;
+    district: string;
+    windowDays?: number;
+  },
+  database: DatabaseExecutor = getDatabaseClient(),
+): Promise<BenchmarkDto> {
+  const db = database;
   const windowDays = input.windowDays ?? DEFAULT_WINDOW_DAYS;
   const [row] = await db
     .select()
@@ -215,7 +222,7 @@ export async function getBenchmark(input: {
 }
 
 async function getNormalizationContext(input: PriceReportInput) {
-  const db = createDatabaseClient();
+  const db = getDatabaseClient();
   const [row] = await db
     .select({
       productId: products.id,
@@ -259,14 +266,17 @@ export async function previewNormalization(input: PriceReportInput) {
   return (await getNormalizationContext(input)).normalization;
 }
 
-export async function recomputeBenchmark(scope: {
-  productId: string;
-  province: string;
-  city: string;
-  district: string;
-  windowDays?: number;
-}) {
-  const db = createDatabaseClient();
+export async function recomputeBenchmark(
+  scope: {
+    productId: string;
+    province: string;
+    city: string;
+    district: string;
+    windowDays?: number;
+  },
+  database: DatabaseExecutor = getDatabaseClient(),
+) {
+  const db = database;
   const windowDays = scope.windowDays ?? DEFAULT_WINDOW_DAYS;
   const cutoff = new Date(Date.now() - windowDays * 24 * 60 * 60 * 1000);
   const rows = await db
@@ -352,7 +362,7 @@ export async function recomputeBenchmark(scope: {
       },
     });
 
-  return getBenchmark({ ...scope, windowDays });
+  return getBenchmark({ ...scope, windowDays }, db);
 }
 
 export async function submitPriceReport(input: {
@@ -360,187 +370,275 @@ export async function submitPriceReport(input: {
   idempotencyKey: string;
   report: PriceReportInput;
 }): Promise<PriceReportResultDto> {
-  const db = createDatabaseClient();
+  const db = getDatabaseClient();
   const context = await getNormalizationContext(input.report);
-  let [warung] = await db
-    .select()
-    .from(warungs)
-    .where(eq(warungs.ownerAuthUserId, input.authUserId))
-    .limit(1);
+  return db.transaction(async (tx) => {
+    const db = tx;
+    let [warung] = await db
+      .select()
+      .from(warungs)
+      .where(eq(warungs.ownerAuthUserId, input.authUserId))
+      .limit(1);
 
-  if (!warung) {
-    [warung] = await db
-      .insert(warungs)
-      .values({
-        ownerAuthUserId: input.authUserId,
-        displayName: "Warung saya",
-        province: input.report.province,
-        city: input.report.city,
-        district: input.report.district,
+    if (!warung) {
+      [warung] = await db
+        .insert(warungs)
+        .values({
+          ownerAuthUserId: input.authUserId,
+          displayName: "Warung saya",
+          province: input.report.province,
+          city: input.report.city,
+          district: input.report.district,
+        })
+        .returning();
+    }
+    if (!warung) throw new ConflictError("Profil warung tidak dapat dibuat.");
+
+    const [existing] = await db
+      .select({
+        report: priceReports,
+        observation: normalizedObservations,
       })
-      .returning();
-  }
-  if (!warung) throw new ConflictError("Profil warung tidak dapat dibuat.");
+      .from(priceReports)
+      .innerJoin(
+        normalizedObservations,
+        eq(normalizedObservations.priceReportId, priceReports.id),
+      )
+      .where(
+        and(
+          eq(priceReports.warungId, warung.id),
+          eq(priceReports.idempotencyKey, input.idempotencyKey),
+        ),
+      )
+      .limit(1);
 
-  const [existing] = await db
-    .select({
-      report: priceReports,
-      observation: normalizedObservations,
-    })
-    .from(priceReports)
-    .innerJoin(
-      normalizedObservations,
-      eq(normalizedObservations.priceReportId, priceReports.id),
-    )
-    .where(
-      and(
-        eq(priceReports.warungId, warung.id),
-        eq(priceReports.idempotencyKey, input.idempotencyKey),
-      ),
-    )
-    .limit(1);
+    if (existing) {
+      return {
+        reportId: existing.report.id,
+        reference: reportReference(existing.report.id),
+        status: existing.report.status,
+        statusReason: existing.report.statusReason,
+        normalization: {
+          ok: true,
+          landedTotalIdr: existing.observation.landedTotalIdr,
+          baseUnitsTotal: existing.observation.baseUnitsTotal,
+          unitPriceIdr: existing.observation.unitPriceIdr,
+          calculationVersion: existing.observation.calculationVersion,
+        },
+        benchmark: await getBenchmark(
+          {
+            productId: input.report.productId,
+            province: input.report.province,
+            city: input.report.city,
+            district: input.report.district,
+          },
+          db,
+        ),
+      };
+    }
 
-  if (existing) {
-    return {
-      reportId: existing.report.id,
-      reference: reportReference(existing.report.id),
-      status: existing.report.status,
-      statusReason: existing.report.statusReason,
-      normalization: {
-        ok: true,
-        landedTotalIdr: existing.observation.landedTotalIdr,
-        baseUnitsTotal: existing.observation.baseUnitsTotal,
-        unitPriceIdr: existing.observation.unitPriceIdr,
-        calculationVersion: existing.observation.calculationVersion,
-      },
-      benchmark: await getBenchmark({
-        productId: input.report.productId,
-        province: input.report.province,
-        city: input.report.city,
-        district: input.report.district,
-      }),
-    };
-  }
-
-  const fingerprint = createDuplicateFingerprint({
-    warungId: warung.id,
-    productId: input.report.productId,
-    observedDate: input.report.observedDate,
-    unitPriceIdr: context.normalization.unitPriceIdr,
-    quantityPackages: input.report.quantityPackages,
-  });
-  const [duplicate] = await db
-    .select({ id: priceReports.id })
-    .from(priceReports)
-    .where(eq(priceReports.duplicateFingerprint, fingerprint))
-    .limit(1);
-  const referencePrices = await db
-    .select({ unitPriceIdr: normalizedObservations.unitPriceIdr })
-    .from(normalizedObservations)
-    .where(
-      and(
-        eq(normalizedObservations.productId, input.report.productId),
-        eq(normalizedObservations.district, input.report.district),
-        eq(normalizedObservations.eligible, true),
-      ),
-    );
-  const anomalous = isAnomalousPrice(
-    context.normalization.unitPriceIdr,
-    referencePrices.map((row) => row.unitPriceIdr),
-  );
-  const status: PriceReportStatus = duplicate
-    ? "excluded"
-    : anomalous
-      ? "flagged"
-      : "included";
-  const statusReason = duplicate
-    ? "DUPLICATE_REPORT"
-    : anomalous
-      ? "ANOMALOUS_PRICE"
-      : null;
-
-  const [created] = await db
-    .insert(priceReports)
-    .values({
+    const fingerprint = createDuplicateFingerprint({
       warungId: warung.id,
       productId: input.report.productId,
-      packagingOptionId: input.report.packagingOptionId,
       observedDate: input.report.observedDate,
+      unitPriceIdr: context.normalization.unitPriceIdr,
       quantityPackages: input.report.quantityPackages,
-      unitsPerPackage: context.unitsPerPackage,
-      grossPriceIdr: input.report.grossPriceIdr,
-      discountIdr: input.report.discountIdr,
-      deliveryFeeIdr: input.report.deliveryFeeIdr,
-      paymentTerms: input.report.paymentTerms,
-      supplierType: input.report.supplierType,
-      aggregationConsent: input.report.aggregationConsent,
+    });
+    const [duplicate] = await db
+      .select({ id: priceReports.id })
+      .from(priceReports)
+      .where(eq(priceReports.duplicateFingerprint, fingerprint))
+      .limit(1);
+    const referencePrices = await db
+      .select({ unitPriceIdr: normalizedObservations.unitPriceIdr })
+      .from(normalizedObservations)
+      .where(
+        and(
+          eq(normalizedObservations.productId, input.report.productId),
+          eq(normalizedObservations.district, input.report.district),
+          eq(normalizedObservations.eligible, true),
+        ),
+      );
+    const anomalous = isAnomalousPrice(
+      context.normalization.unitPriceIdr,
+      referencePrices.map((row) => row.unitPriceIdr),
+    );
+    const status: PriceReportStatus = duplicate
+      ? "excluded"
+      : anomalous
+        ? "flagged"
+        : "included";
+    const statusReason = duplicate
+      ? "DUPLICATE_REPORT"
+      : anomalous
+        ? "ANOMALOUS_PRICE"
+        : null;
+
+    const [created] = await db
+      .insert(priceReports)
+      .values({
+        warungId: warung.id,
+        productId: input.report.productId,
+        packagingOptionId: input.report.packagingOptionId,
+        observedDate: input.report.observedDate,
+        quantityPackages: input.report.quantityPackages,
+        unitsPerPackage: context.unitsPerPackage,
+        grossPriceIdr: input.report.grossPriceIdr,
+        discountIdr: input.report.discountIdr,
+        deliveryFeeIdr: input.report.deliveryFeeIdr,
+        paymentTerms: input.report.paymentTerms,
+        supplierType: input.report.supplierType,
+        aggregationConsent: input.report.aggregationConsent,
+        status,
+        statusReason,
+        duplicateFingerprint: fingerprint,
+        idempotencyKey: input.idempotencyKey,
+      })
+      .returning();
+    if (!created) throw new ConflictError("Laporan tidak dapat disimpan.");
+
+    await db.insert(normalizedObservations).values({
+      priceReportId: created.id,
+      productId: input.report.productId,
+      warungId: warung.id,
+      landedTotalIdr: context.normalization.landedTotalIdr,
+      baseUnitsTotal: context.normalization.baseUnitsTotal,
+      unitPriceIdr: context.normalization.unitPriceIdr,
+      province: input.report.province,
+      city: input.report.city,
+      district: input.report.district,
+      observedAt: new Date(`${input.report.observedDate}T12:00:00.000Z`),
+      verificationWeight: 50,
+      completenessWeight: 100,
+      eligible: status === "included",
+      exclusionReason: statusReason,
+      calculationVersion: NORMALIZATION_VERSION,
+    });
+    await db.insert(consents).values({
+      ownerAuthUserId: input.authUserId,
+      purpose: "anonymous_aggregation",
+      policyVersion: "1.0.0",
+    });
+    await db.insert(auditEvents).values({
+      actorAuthUserId: input.authUserId,
+      eventType: "price_report_created",
+      entityType: "price_report",
+      entityId: created.id,
+      reasonCode: statusReason,
+      metadata: { status },
+    });
+
+    const benchmarkScopes = [30, 90].map((windowDays) => ({
+      productId: input.report.productId,
+      province: input.report.province,
+      city: input.report.city,
+      district: input.report.district,
+      windowDays,
+    }));
+    const [benchmark] = await Promise.all(
+      benchmarkScopes.map((scope) => recomputeBenchmark(scope, db)),
+    );
+    if (!benchmark) {
+      throw new ConflictError("Benchmark tidak dapat dihitung ulang.");
+    }
+
+    return {
+      reportId: created.id,
+      reference: reportReference(created.id),
       status,
       statusReason,
-      duplicateFingerprint: fingerprint,
-      idempotencyKey: input.idempotencyKey,
-    })
-    .returning();
-  if (!created) throw new ConflictError("Laporan tidak dapat disimpan.");
-
-  await db.insert(normalizedObservations).values({
-    priceReportId: created.id,
-    productId: input.report.productId,
-    warungId: warung.id,
-    landedTotalIdr: context.normalization.landedTotalIdr,
-    baseUnitsTotal: context.normalization.baseUnitsTotal,
-    unitPriceIdr: context.normalization.unitPriceIdr,
-    province: input.report.province,
-    city: input.report.city,
-    district: input.report.district,
-    observedAt: new Date(`${input.report.observedDate}T12:00:00.000Z`),
-    verificationWeight: 50,
-    completenessWeight: 100,
-    eligible: status === "included",
-    exclusionReason: statusReason,
-    calculationVersion: NORMALIZATION_VERSION,
+      normalization: context.normalization as NormalizationSuccess,
+      benchmark,
+    };
   });
-  await db.insert(consents).values({
-    ownerAuthUserId: input.authUserId,
-    purpose: "anonymous_aggregation",
-    policyVersion: "1.0.0",
-  });
-  await db.insert(auditEvents).values({
-    actorAuthUserId: input.authUserId,
-    eventType: "price_report_created",
-    entityType: "price_report",
-    entityId: created.id,
-    reasonCode: statusReason,
-    metadata: { status },
-  });
+}
 
-  const benchmarkScopes = [30, 90].map((windowDays) => ({
-    productId: input.report.productId,
-    province: input.report.province,
-    city: input.report.city,
-    district: input.report.district,
-    windowDays,
-  }));
-  const [benchmark] = await Promise.all(
-    benchmarkScopes.map((scope) => recomputeBenchmark(scope)),
-  );
-  if (!benchmark) {
-    throw new ConflictError("Benchmark tidak dapat dihitung ulang.");
-  }
+export async function withdrawPriceReport(input: {
+  authUserId: string;
+  reportId: string;
+}) {
+  const db = getDatabaseClient();
 
-  return {
-    reportId: created.id,
-    reference: reportReference(created.id),
-    status,
-    statusReason,
-    normalization: context.normalization as NormalizationSuccess,
-    benchmark,
-  };
+  return db.transaction(async (tx) => {
+    const [report] = await tx
+      .select({
+        id: priceReports.id,
+        productId: priceReports.productId,
+        province: normalizedObservations.province,
+        city: normalizedObservations.city,
+        district: normalizedObservations.district,
+      })
+      .from(priceReports)
+      .innerJoin(warungs, eq(priceReports.warungId, warungs.id))
+      .innerJoin(
+        normalizedObservations,
+        eq(normalizedObservations.priceReportId, priceReports.id),
+      )
+      .where(
+        and(
+          eq(priceReports.id, input.reportId),
+          eq(warungs.ownerAuthUserId, input.authUserId),
+        ),
+      )
+      .limit(1);
+
+    if (!report) throw new NotFoundError("Laporan tidak ditemukan.");
+
+    const reasonCode = "AGGREGATION_CONSENT_WITHDRAWN";
+    await tx
+      .update(priceReports)
+      .set({
+        aggregationConsent: false,
+        status: "excluded",
+        statusReason: reasonCode,
+        updatedAt: new Date(),
+      })
+      .where(eq(priceReports.id, report.id));
+    await tx
+      .update(normalizedObservations)
+      .set({ eligible: false, exclusionReason: reasonCode })
+      .where(eq(normalizedObservations.priceReportId, report.id));
+    await tx
+      .update(consents)
+      .set({ withdrawnAt: new Date() })
+      .where(
+        and(
+          eq(consents.ownerAuthUserId, input.authUserId),
+          eq(consents.purpose, "anonymous_aggregation"),
+          isNull(consents.withdrawnAt),
+        ),
+      );
+    await tx.insert(auditEvents).values({
+      actorAuthUserId: input.authUserId,
+      eventType: "price_report_aggregation_withdrawn",
+      entityType: "price_report",
+      entityId: report.id,
+      reasonCode,
+    });
+
+    await Promise.all(
+      [30, 90].map((windowDays) =>
+        recomputeBenchmark(
+          {
+            productId: report.productId,
+            province: report.province,
+            city: report.city,
+            district: report.district,
+            windowDays,
+          },
+          tx,
+        ),
+      ),
+    );
+
+    return { reportId: report.id, status: "excluded" as const, reasonCode };
+  });
 }
 
 export async function listOwnReports(
   authUserId: string,
 ): Promise<ActivityItemDto[]> {
-  const db = createDatabaseClient();
+  const db = getDatabaseClient();
   const rows = await db
     .select({
       id: priceReports.id,

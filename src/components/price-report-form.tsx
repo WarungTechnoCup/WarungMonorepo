@@ -2,9 +2,13 @@
 
 import { CheckCircle } from "@phosphor-icons/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { NormalizationSuccess } from "@/domain/harga-wajar/types";
+import {
+  defaultCoarseLocation,
+  LocationSelector,
+} from "@/components/location-selector";
 import { fetchApi } from "@/lib/api-client";
 import { formatRupiah } from "@/lib/format";
 import type { PriceReportResultDto, ProductDto } from "@/types/harga-wajar";
@@ -31,11 +35,13 @@ export function PriceReportForm({ initialProductId }: PriceReportFormProps) {
   const [deliveryFeeIdr, setDeliveryFeeIdr] = useState("0");
   const [paymentTerms, setPaymentTerms] = useState<"tunai" | "tempo">("tunai");
   const [supplierType, setSupplierType] = useState("distributor");
+  const [area, setArea] = useState(defaultCoarseLocation);
   const [aggregationConsent, setAggregationConsent] = useState(false);
   const [preview, setPreview] = useState<NormalizationSuccess | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const idempotencyKey = useRef<string | null>(null);
 
   const selectedProduct = useMemo(
     () => products.find((product) => product.id === productId) ?? null,
@@ -78,9 +84,7 @@ export function PriceReportForm({ initialProductId }: PriceReportFormProps) {
       deliveryFeeIdr: Number(deliveryFeeIdr),
       paymentTerms,
       supplierType,
-      province: "DKI Jakarta",
-      city: "Jakarta Barat",
-      district: "Kebon Jeruk",
+      ...area,
       aggregationConsent,
     };
   }
@@ -113,6 +117,8 @@ export function PriceReportForm({ initialProductId }: PriceReportFormProps) {
   async function submitReport() {
     setSubmitting(true);
     setError(null);
+    const requestIdempotencyKey = idempotencyKey.current ?? crypto.randomUUID();
+    idempotencyKey.current = requestIdempotencyKey;
     try {
       const result = await fetchApi<PriceReportResultDto>(
         "/api/price-reports",
@@ -120,7 +126,7 @@ export function PriceReportForm({ initialProductId }: PriceReportFormProps) {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Idempotency-Key": crypto.randomUUID(),
+            "Idempotency-Key": requestIdempotencyKey,
           },
           body: JSON.stringify(payload()),
         },
@@ -370,6 +376,9 @@ export function PriceReportForm({ initialProductId }: PriceReportFormProps) {
                   <option value="lainnya">Lainnya</option>
                 </select>
               </div>
+            </div>
+            <div className="mt-5">
+              <LocationSelector onChange={setArea} value={area} />
             </div>
             <p className="text-ink-muted mt-5 text-sm">
               {selectedPackage

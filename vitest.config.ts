@@ -18,7 +18,13 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "html"],
-      include: ["src/lib/**/*.ts", "src/app/api/**/*.ts"],
+      include: [
+        "src/domain/**/*.ts",
+        "src/lib/**/*.ts",
+        "src/app/api/**/*.ts",
+        "src/server/api-response.ts",
+        "src/server/harga-wajar/validation.ts",
+      ],
       thresholds: {
         lines: 70,
         functions: 70,
