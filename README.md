@@ -44,7 +44,7 @@ Warung dan pengecer mikro membutuhkan acuan harga kulakan yang mudah dipahami ta
 
 Warung Cek Harga dirancang sebagai produk intelijen pengadaan komunitas. MVP akan menggabungkan Harga Wajar, kontribusi harga yang diverifikasi, dan Kulakan Bareng. Harga Wajar hanya akan ditampilkan setelah sedikitnya lima kontributor independen agar satu laporan tidak membentuk patokan publik. Produk ini mendukung SDG 8 sebagai fokus utama dan SDG 9 sebagai fokus pendukung.
 
-Milestone saat ini adalah scaffold teknis. Struktur aplikasi, batas akses, dan dokumentasi telah tersedia, tetapi alur bisnis, data harga, autentikasi antarmuka, dan grup pembelian belum diimplementasikan. Lihat [docs/progress.md](docs/progress.md) untuk status terkini.
+Milestone saat ini adalah vertical slice Harga Wajar. Struktur aplikasi dan batas akses telah berkembang menjadi katalog, benchmark berambang privasi, autentikasi, normalisasi, kontribusi harga, dan aktivitas pribadi. Migrasi dan data demo tersedia, tetapi masih harus diterapkan dan diverifikasi pada project Supabase pengembangan. Kulakan Bareng belum diimplementasikan. Lihat [docs/progress.md](docs/progress.md) untuk status terkini.
 
 ### Tujuan
 
@@ -56,8 +56,8 @@ Milestone saat ini adalah scaffold teknis. Struktur aplikasi, batas akses, dan d
 
 | Fitur                          | Tujuan                                                           | Status saat ini                                                     |
 | ------------------------------ | ---------------------------------------------------------------- | ------------------------------------------------------------------- |
-| Harga Wajar                    | Menampilkan benchmark harga setelah ambang kontributor terpenuhi | Scaffold, logika belum diimplementasikan                            |
-| Kontribusi harga terverifikasi | Mengumpulkan laporan harga dengan perlindungan privasi           | Scaffold, alur laporan belum diimplementasikan                      |
+| Harga Wajar                    | Menampilkan benchmark harga setelah ambang kontributor terpenuhi | Diimplementasikan, menunggu verifikasi database pengembangan        |
+| Kontribusi harga terverifikasi | Mengumpulkan laporan harga dengan perlindungan privasi           | Normalisasi dan laporan tersedia; unggah struk masih dinonaktifkan  |
 | Kulakan Bareng                 | Membantu pembelian bersama berdasarkan minat dan komitmen        | Scaffold, domain belum diimplementasikan                            |
 | Warung Passport                | Pratinjau terbatas untuk data sensitif dan bukti kepercayaan     | Route terlindungi tersedia, perilaku produk belum diimplementasikan |
 | Batas akses aman               | Memisahkan route publik, terlindungi, dan admin                  | Diimplementasikan pada tingkat scaffold                             |
@@ -108,7 +108,7 @@ Belum tersedia. Video akan dibuat untuk presentasi final setelah alur Harga Waja
 | Vitest              | Pengujian unit dan kontrak                           |
 | Playwright          | Pengujian alur route pada desktop dan viewport 360px |
 | ESLint dan Prettier | Konsistensi kode                                     |
-| GitHub Actions      | Continuous integration yang direncanakan             |
+| GitHub Actions      | Continuous integration untuk quality gate dan E2E    |
 | Vercel              | Target deployment yang direncanakan                  |
 
 ### Alasan Pemilihan Teknologi
@@ -160,7 +160,7 @@ Adapter dan kontrak lingkungan tersedia, tetapi belum ada project Supabase, tabe
 
 ### Database Schema
 
-Schema domain belum dibuat pada milestone scaffold ini. Saat tabel domain diperkenalkan, perubahan akan menggunakan migrasi Drizzle yang versioned dan reviewable. Prinsip data, pemisahan benchmark, dan batas privasi terdokumentasi di [docs/architecture.md](docs/architecture.md) dan [docs/privacy.md](docs/privacy.md).
+Schema domain dan migrasi pertama mencakup warung, katalog, laporan harga, hasil normalisasi, benchmark, consent, metadata struk, dan audit. RLS aktif pada seluruh tabel domain, dan constraint database mencegah publikasi median di bawah lima warung independen. Detail tersedia di [docs/architecture.md](docs/architecture.md) dan [docs/privacy.md](docs/privacy.md).
 
 ### Struktur Folder
 
@@ -230,7 +230,7 @@ pnpm db:migrate
 pnpm db:seed
 ```
 
-Perintah database disediakan sebagai kontrak scaffold. Jalankan setelah schema domain, migrasi, dan lingkungan Supabase pengembangan tersedia.
+Perintah database menjalankan migrasi dan seed sintetis Harga Wajar. Jalankan hanya pada project Supabase pengembangan yang telah ditinjau.
 
 ### Run Locally
 
@@ -244,7 +244,7 @@ Buka [http://localhost:3000](http://localhost:3000). Untuk build produksi, gunak
 
 ### Pengguna Umum
 
-Route publik yang dapat diperiksa pada scaffold:
+Route publik Harga Wajar:
 
 - `/`
 - `/cek-harga`
@@ -255,11 +255,11 @@ Route publik yang dapat diperiksa pada scaffold:
 - `/privasi`
 - `/masuk`
 
-Route akan menampilkan status yang jujur apabila fitur bisnisnya belum tersedia.
+`/cek-harga` dan `/produk/[slug]` membaca katalog serta benchmark dari API dan database. Route Kulakan Bareng tetap menampilkan status scaffold yang jujur.
 
 ### Pengguna Terautentikasi
 
-Route berikut sudah memiliki batas akses fail-closed, tetapi belum memiliki antarmuka autentikasi atau perilaku domain:
+Route berikut memiliki batas akses fail-closed dan perilaku Harga Wajar:
 
 - `/lapor-harga`
 - `/lapor-harga/sukses`
@@ -272,7 +272,7 @@ Route berikut sudah memiliki batas akses fail-closed, tetapi belum memiliki anta
 
 ## Dokumentasi API
 
-Endpoint yang tersedia pada scaffold adalah `GET /api/health`.
+Endpoint yang tersedia meliputi health, katalog, benchmark, pratinjau normalisasi, pengiriman laporan idempotent, dan aktivitas pemilik.
 
 ```bash
 curl http://localhost:3000/api/health
@@ -294,7 +294,7 @@ Contoh respons lokal tanpa konfigurasi layanan:
 }
 ```
 
-Kontrak API menggunakan `ApiSuccess<T>` untuk respons sukses dan `ApiFailure` untuk respons gagal. Endpoint bisnis belum dibuat pada milestone ini.
+Kontrak API menggunakan `ApiSuccess<T>` untuk respons sukses dan `ApiFailure` untuk respons gagal. Benchmark `insufficient` tidak membawa statistik harga, sedangkan benchmark `available` hanya membawa agregat yang diizinkan.
 
 ## Testing
 

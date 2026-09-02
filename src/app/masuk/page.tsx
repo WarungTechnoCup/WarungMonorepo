@@ -1,27 +1,27 @@
-import { ScaffoldPage } from "@/components/scaffold-page";
+import { SignInForm } from "@/components/sign-in-form";
 
 interface SignInPageProps {
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; next?: string }>;
 }
 
 export default async function SignInPage({ searchParams }: SignInPageProps) {
-  const { status } = await searchParams;
+  const { status, next } = await searchParams;
   const configurationMessage =
     status === "konfigurasi"
       ? "Supabase belum dikonfigurasi. Tim pengembang perlu mengisi .env.local sebelum autentikasi dapat digunakan."
       : undefined;
+  const authenticationMessage =
+    status === "autentikasi"
+      ? "Sesi kamu belum aktif atau sudah berakhir. Masuk kembali untuk melanjutkan."
+      : undefined;
+  const nextPath =
+    next?.startsWith("/") && !next.startsWith("//") ? next : "/lapor-harga";
 
   return (
-    <ScaffoldPage
-      description="Rute autentikasi sudah tersedia, tetapi formulir dan akun demo baru akan dibuat setelah sumber daya Supabase disiapkan."
-      eyebrow="Akses akun"
-      plannedItems={[
-        "Masuk dengan email dan kata sandi melalui Supabase Auth.",
-        "Pertahankan tujuan awal pengguna setelah proses autentikasi.",
-        "Tampilkan kesalahan dalam Bahasa Indonesia tanpa membocorkan detail sistem.",
-      ]}
-      privacyNote={configurationMessage}
-      title="Masuk untuk berkontribusi."
+    <SignInForm
+      authenticationMessage={authenticationMessage}
+      configurationMessage={configurationMessage}
+      nextPath={nextPath}
     />
   );
 }

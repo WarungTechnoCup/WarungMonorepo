@@ -54,7 +54,9 @@ Do not add a service-role key to browser-prefixed variables. Secrets must remain
 
 ## Data dan migrasi
 
-`src/db/schema.ts` is intentionally empty during scaffolding. `src/db/client.ts` uses the Supabase transaction pooler through `postgres` with prepared statements disabled. Drizzle writes reviewable SQL to `drizzle/`.
+`src/db/schema.ts` now defines the first Harga Wajar domain tables: warungs, products, packaging options, reports, normalized observations, benchmarks, consents, receipt metadata, and audit events. `src/db/client.ts` uses the Supabase transaction pooler through `postgres` with prepared statements disabled. Drizzle writes reviewable SQL to `drizzle/`.
+
+Migration `0000_spotty_surge.sql` enables RLS on every domain table, forces RLS on private tables, revokes direct access to operational records, and grants anonymous access only to active catalog data and aggregate benchmarks. A database constraint prevents median and range publication below five independent warungs.
 
 Schema changes require:
 
@@ -71,6 +73,10 @@ Applied migrations are append-only. Seed data is synthetic and labeled as demo d
 Successful responses use `ApiSuccess<T>` with `data` and optional `meta`. Failures use `ApiFailure` with a stable `code`, Bahasa Indonesia `message`, optional field errors, and a request ID. Public response fields must be allowlisted.
 
 `GET /api/health` returns version and boolean configuration status. It never returns URLs, keys, connection strings, bucket contents, or environment values.
+
+Harga Wajar exposes public product and benchmark reads plus authenticated normalization preview, idempotent report submission, and owner activity reads. Public benchmark responses are a discriminated union: `insufficient` never contains price statistics, while `available` contains only aggregate median, interquartile range, counts, recency, confidence, and calculation version.
+
+Report submission validates with Zod, resolves the canonical package, normalizes landed cost, detects duplicates and IQR anomalies, persists consent and an audit event, and recomputes the scoped benchmark. Database records remain the only data source for the UI.
 
 ## Storage and privacy
 

@@ -3,11 +3,18 @@ import postgres from "postgres";
 
 import { getDatabaseUrl } from "@/lib/env";
 
-export function createDatabaseClient() {
+export function createDatabaseConnection() {
   const queryClient = postgres(getDatabaseUrl(), {
     max: 1,
     prepare: false,
   });
 
-  return drizzle(queryClient);
+  return {
+    db: drizzle(queryClient),
+    close: () => queryClient.end(),
+  };
+}
+
+export function createDatabaseClient() {
+  return createDatabaseConnection().db;
 }

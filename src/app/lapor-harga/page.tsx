@@ -1,17 +1,12 @@
-import { ScaffoldPage } from "@/components/scaffold-page";
+import { PriceReportForm } from "@/components/price-report-form";
 
-export default function ReportPricePage() {
-  return (
-    <ScaffoldPage
-      description="Rute terlindungi ini disiapkan untuk kontribusi harga. Tanpa konfigurasi Supabase dan sesi yang valid, proxy akan menolak akses."
-      eyebrow="Contribute"
-      plannedItems={[
-        "Validasi produk, ukuran, harga, wilayah, waktu, dan persetujuan di server.",
-        "Unggah bukti ke bucket privat dengan jalur yang tidak dapat ditebak.",
-        "Pertahankan masukan pengguna ketika validasi gagal.",
-      ]}
-      privacyNote="Jangan gunakan struk atau data pribadi nyata sampai kontrol Storage dan row-level security ditinjau."
-      title="Bagikan harga dengan kendali yang jelas."
-    />
-  );
+interface ReportPricePageProps {
+  searchParams: Promise<{ productId?: string }>;
+}
+
+export default async function ReportPricePage({
+  searchParams,
+}: ReportPricePageProps) {
+  const { productId } = await searchParams;
+  return <PriceReportForm initialProductId={productId} />;
 }

@@ -22,3 +22,5 @@ Exact addresses, warung identities, raw receipts, and identifiable supplier-repo
 ## Controls before data collection
 
 No real user data may be collected until schema ownership, RLS, private Storage policies, retention, deletion, consent withdrawal, public allowlists, and cross-user tests are complete. The privacy notice must name each purpose in plain Bahasa Indonesia.
+
+The first Harga Wajar migration enables RLS on all domain tables, forces it on private records, revokes direct access to operational tables, and exposes only active catalog rows plus aggregate benchmark rows. Receipt upload remains disabled until private Storage, retention, deletion, metadata removal, signed access, and cross-user tests are implemented.

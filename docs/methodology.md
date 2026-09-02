@@ -1,6 +1,6 @@
 # Harga Wajar methodology
 
-This document sets guardrails, not implemented calculations.
+This document describes the implemented Harga Wajar calculation contract. The first implementation is version `1.0.0` and remains subject to review against production data.
 
 ## Objective
 
@@ -12,15 +12,15 @@ A future observation requires a canonical product, package quantity and unit, pr
 
 ## Normalization
 
-Normalization will convert compatible package quantities into a documented comparison unit. The function must be pure, deterministic, and tested against incompatible units, bundles, promotions, and missing quantities. No conversion may silently infer an unknown package size.
+Normalization converts compatible package quantities into a documented comparison unit using `(harga kotor - diskon + biaya kirim) / total unit dasar`. The function is pure and deterministic, rejects incompatible units, and never silently infers an unknown package size.
 
 ## Independence and threshold
 
-A precise benchmark requires at least five independent contributors after trust and duplication checks. Before the threshold, the interface shows progress and explains what is missing. It does not publish a mean, median, range, or fabricated example as real data.
+A precise benchmark requires at least five independent contributors after trust and duplication checks. This rule is enforced in both the domain function and a PostgreSQL constraint. Before the threshold, the API and interface show progress without returning a mean, median, or range.
 
 ## Confidence
 
-Confidence may consider contributor independence, freshness, verification state, sample size, geographic fit, and dispersion. Policy weights must be documented, versioned, and explainable. Supplier quotes never enter the community benchmark.
+Confidence version `1.0.0` considers contributor independence, freshness, verification state, sample size, dispersion, and completeness using the weights recorded in the developer specification. The result is versioned and explainable. Supplier quotes never enter the community benchmark.
 
 ## Public presentation
 

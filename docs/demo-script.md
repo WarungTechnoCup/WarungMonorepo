@@ -1,6 +1,6 @@
 # Demo and presentation script
 
-Status: pending product implementation. Do not present route shells as working features.
+Status: Harga Wajar implemented locally, pending Supabase migration, seeded deployment, and clean-browser verification. Do not present Kulakan Bareng route shells as working features.
 
 ## Preliminary demo path
 
