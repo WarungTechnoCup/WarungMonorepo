@@ -1,64 +1,324 @@
-# Warung Cek Harga
+<div align="center">
+  <h1>Warung Cek Harga</h1>
+  <p>Intelijen pengadaan komunitas untuk warung Indonesia</p>
+  <p>
+    <a href="https://github.com/WarungTechnoCup/WarungMonorepo"><img src="https://img.shields.io/badge/GitHub-Repository-181717?logo=github" alt="GitHub Repository" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License" /></a>
+    <img src="https://img.shields.io/badge/Deployment-Pending-lightgrey" alt="Deployment pending" />
+  </p>
+  <p><strong>Submission for ITECHNO CUP 2026 - Web Development</strong></p>
+  <p><strong>Tim: Belum ditetapkan</strong></p>
+</div>
 
-Warung Cek Harga adalah fondasi intelijen pengadaan untuk membantu pemilik warung memahami harga wajar, menyumbangkan bukti harga secara aman, dan membentuk daya beli melalui Kulakan Bareng. Proyek ini mengangkat SDG 8 sebagai fokus utama dan SDG 9 sebagai pendukung.
+## Daftar Isi
 
-Status saat ini adalah **scaffold**. Rute, kontrak lingkungan, adapter, quality gates, dan dokumentasi tim sudah tersedia. Autentikasi, database domain, benchmark, kontribusi harga, pembelian bersama, Passport, dan deployment belum diimplementasikan.
+- [Tim Pengembang](#tim-pengembang)
+- [Tentang Proyek](#tentang-proyek)
+- [Fitur Unggulan](#fitur-unggulan)
+- [Demo dan Screenshot](#demo-dan-screenshot)
+- [Teknologi](#teknologi)
+- [Arsitektur Sistem](#arsitektur-sistem)
+- [Instalasi dan Setup](#instalasi-dan-setup)
+- [Penggunaan](#penggunaan)
+- [Dokumentasi API](#dokumentasi-api)
+- [Testing](#testing)
+- [Lisensi](#lisensi)
 
-## Pembeda utama
+## Tim Pengembang
 
-- **Harga Wajar:** benchmark komunitas yang baru tampil setelah sedikitnya lima kontributor independen.
-- **Kontribusi terverifikasi:** fondasi untuk bukti transaksi, normalisasi, dan sinyal kepercayaan tanpa membuka identitas warung.
-- **Kulakan Bareng:** jalur dari informasi harga menuju koordinasi daya beli, dengan kutipan pemasok tetap terpisah dari benchmark komunitas.
-- **Passport:** preview terbatas untuk ringkasan kontribusi yang membutuhkan persetujuan dan perlindungan tambahan.
+| Nama      | Peran                                               | GitHub           |
+| --------- | --------------------------------------------------- | ---------------- |
+| Anggota 1 | Discover: pencarian, benchmark, dan metodologi      | Belum ditetapkan |
+| Anggota 2 | Contribute: autentikasi, pelaporan, dan kepercayaan | Belum ditetapkan |
+| Anggota 3 | Act: Kulakan Bareng, integrasi, dan kesiapan demo   | Belum ditetapkan |
 
-## Teknologi dan tujuannya
+Nama dan akun GitHub akan diisi setelah anggota tim dikonfirmasi. Pembagian kerja lengkap tersedia di [docs/team-workflow.md](docs/team-workflow.md).
 
-| Teknologi                        | Tujuan                                                      |
-| -------------------------------- | ----------------------------------------------------------- |
-| Next.js 16, React 19, TypeScript | Antarmuka App Router, rendering server, dan kontrak tipe    |
-| Tailwind CSS 4                   | Sistem visual mobile-first dengan komponen milik proyek     |
-| Supabase                         | PostgreSQL, autentikasi berbasis cookie, dan Storage privat |
-| Drizzle ORM                      | Schema bertipe dan migrasi SQL yang dapat ditinjau          |
-| Vitest dan Playwright            | Pengujian unit, kontrak, akses, dan alur pengguna           |
+## Tentang Proyek
 
-## Menjalankan lokal
+### Latar Belakang
 
-Prasyarat: Node.js 24 dan pnpm 11.19.0.
+Warung dan pengecer mikro membutuhkan acuan harga kulakan yang mudah dipahami tanpa membuka identitas, alamat, atau bukti transaksi mereka. Perbedaan informasi harga membuat keputusan stok dan pembelian bersama lebih sulit dilakukan.
+
+### Solusi
+
+Warung Cek Harga dirancang sebagai produk intelijen pengadaan komunitas. MVP akan menggabungkan Harga Wajar, kontribusi harga yang diverifikasi, dan Kulakan Bareng. Harga Wajar hanya akan ditampilkan setelah sedikitnya lima kontributor independen agar satu laporan tidak membentuk patokan publik. Produk ini mendukung SDG 8 sebagai fokus utama dan SDG 9 sebagai fokus pendukung.
+
+Milestone saat ini adalah scaffold teknis. Struktur aplikasi, batas akses, dan dokumentasi telah tersedia, tetapi alur bisnis, data harga, autentikasi antarmuka, dan grup pembelian belum diimplementasikan. Lihat [docs/progress.md](docs/progress.md) untuk status terkini.
+
+### Tujuan
+
+- Mengurangi kesenjangan informasi harga bagi pemilik warung.
+- Memberikan acuan harga yang netral, berbasis kontribusi komunitas, dan menjaga privasi.
+- Membantu pengguna beralih dari mengetahui harga ke tindakan pembelian bersama yang terukur.
+
+## Fitur Unggulan
+
+| Fitur                          | Tujuan                                                           | Status saat ini                                                     |
+| ------------------------------ | ---------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Harga Wajar                    | Menampilkan benchmark harga setelah ambang kontributor terpenuhi | Scaffold, logika belum diimplementasikan                            |
+| Kontribusi harga terverifikasi | Mengumpulkan laporan harga dengan perlindungan privasi           | Scaffold, alur laporan belum diimplementasikan                      |
+| Kulakan Bareng                 | Membantu pembelian bersama berdasarkan minat dan komitmen        | Scaffold, domain belum diimplementasikan                            |
+| Warung Passport                | Pratinjau terbatas untuk data sensitif dan bukti kepercayaan     | Route terlindungi tersedia, perilaku produk belum diimplementasikan |
+| Batas akses aman               | Memisahkan route publik, terlindungi, dan admin                  | Diimplementasikan pada tingkat scaffold                             |
+
+Route yang belum memiliki perilaku produk ditandai sebagai scaffolded. Tombol pada route tersebut tidak menyatakan bahwa proses backend telah berjalan.
+
+## Demo dan Screenshot
+
+### Live Demo
+
+Belum tersedia. Hosting Vercel akan dikonfigurasi setelah aplikasi memiliki fitur produk dan lingkungan Supabase pengembangan.
+
+### Screenshot
+
+Belum tersedia. Screenshot desktop dan mobile akan ditambahkan setelah UI produk selesai. Statusnya dicatat di [docs/progress.md](docs/progress.md).
+
+### Video Demo
+
+Belum tersedia. Video akan dibuat untuk presentasi final setelah alur Harga Wajar, kontribusi harga, dan Kulakan Bareng dapat didemonstrasikan.
+
+## Teknologi
+
+### Frontend
+
+| Teknologi             | Fungsi                                      |
+| --------------------- | ------------------------------------------- |
+| Next.js 16 App Router | Kerangka aplikasi web dan route server      |
+| React 19              | Komponen antarmuka                          |
+| TypeScript            | Kontrak tipe dan keamanan saat pengembangan |
+| Tailwind CSS 4        | Sistem gaya mobile-first                    |
+
+### Backend dan Data
+
+| Teknologi           | Fungsi                                                  |
+| ------------------- | ------------------------------------------------------- |
+| Node.js 24          | Runtime pengembangan dan produksi                       |
+| Supabase PostgreSQL | Database aplikasi yang akan digunakan                   |
+| Supabase Auth       | Adapter autentikasi email dan kata sandi yang disiapkan |
+| Supabase Storage    | Adapter penyimpanan bukti yang disiapkan                |
+| Drizzle ORM         | Definisi schema dan migrasi SQL yang dapat ditinjau     |
+| Zod                 | Validasi pada batas write saat endpoint bisnis dibuat   |
+
+### DevOps dan Quality Gate
+
+| Teknologi           | Fungsi                                               |
+| ------------------- | ---------------------------------------------------- |
+| pnpm 11             | Package manager dan lockfile reproducible            |
+| Vitest              | Pengujian unit dan kontrak                           |
+| Playwright          | Pengujian alur route pada desktop dan viewport 360px |
+| ESLint dan Prettier | Konsistensi kode                                     |
+| GitHub Actions      | Continuous integration yang direncanakan             |
+| Vercel              | Target deployment yang direncanakan                  |
+
+### Alasan Pemilihan Teknologi
+
+| Keputusan             | Alasan                                                                                |
+| --------------------- | ------------------------------------------------------------------------------------- |
+| Next.js App Router    | Mendukung route publik dan terlindungi dengan batas server yang jelas                 |
+| Supabase dan Drizzle  | Menyediakan PostgreSQL, autentikasi, penyimpanan, dan migrasi yang dapat ditinjau tim |
+| Tailwind CSS          | Memudahkan antarmuka konsisten dengan baseline mobile 360px                           |
+| Vitest dan Playwright | Menguji logika serta pengalaman pengguna lintas viewport                              |
+
+### Dependensi Utama
+
+```json
+{
+  "next": "16.3.4",
+  "react": "19.2.8",
+  "@supabase/ssr": "^0.12.5",
+  "drizzle-orm": "^0.44.5",
+  "zod": "^4.1.11"
+}
+```
+
+Versi lengkap tersedia di [package.json](package.json) dan dikunci dalam [pnpm-lock.yaml](pnpm-lock.yaml).
+
+## Arsitektur Sistem
+
+### Diagram Arsitektur
+
+```text
+Pengguna
+  |
+  v
+Next.js App Router
+  |-- Route publik dan API health
+  |-- proxy.ts untuk refresh sesi dan batas route terlindungi
+  |
+  v
+Adapter Supabase
+  |-- Auth
+  |-- PostgreSQL
+  |-- Storage
+  |
+  v
+Drizzle schema dan migrasi SQL
+```
+
+Adapter dan kontrak lingkungan tersedia, tetapi belum ada project Supabase, tabel domain, atau migrasi domain yang diterapkan. Detail keputusan arsitektur tersedia di [docs/architecture.md](docs/architecture.md).
+
+### Database Schema
+
+Schema domain belum dibuat pada milestone scaffold ini. Saat tabel domain diperkenalkan, perubahan akan menggunakan migrasi Drizzle yang versioned dan reviewable. Prinsip data, pemisahan benchmark, dan batas privasi terdokumentasi di [docs/architecture.md](docs/architecture.md) dan [docs/privacy.md](docs/privacy.md).
+
+### Struktur Folder
+
+```text
+src/
+  app/              # Routes App Router dan API
+  components/       # Komponen antarmuka bersama
+  db/               # Entry point Drizzle
+  lib/              # Env, Supabase, dan utilitas bersama
+  test/             # Kontrak dan helper pengujian
+  types/            # Tipe API bersama
+tests/              # Pengujian unit dan kontrak
+e2e/                # Pengujian Playwright
+docs/               # Dokumen kompetisi, arsitektur, dan workflow tim
+docs/decisions/     # Architecture Decision Records
+docs/source/        # Salinan spesifikasi Markdown
+drizzle/            # Direktori migrasi SQL
+scripts/            # Script pengembangan
+.github/            # Konfigurasi CI
+```
+
+## Instalasi dan Setup
+
+### Prerequisites
+
+- Node.js 24
+- pnpm 11
+- Git
+
+### Clone Repository
+
+```bash
+git clone https://github.com/WarungTechnoCup/WarungMonorepo.git
+cd WarungMonorepo
+```
+
+### Install Dependencies
 
 ```bash
 pnpm install --frozen-lockfile
-copy .env.example .env.local
+```
+
+### Environment Configuration
+
+```bash
+cp .env.example .env.local
+```
+
+Isi `.env.local` sesuai kebutuhan lingkungan. Jangan pernah memasukkan nilai rahasia ke Git.
+
+| Variabel                               | Kegunaan                                        |
+| -------------------------------------- | ----------------------------------------------- |
+| `NEXT_PUBLIC_APP_URL`                  | URL aplikasi                                    |
+| `NEXT_PUBLIC_SUPABASE_URL`             | URL project Supabase                            |
+| `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Publishable key Supabase untuk browser          |
+| `DATABASE_URL`                         | Connection string transaction pooler PostgreSQL |
+| `SUPABASE_STORAGE_BUCKET`              | Nama bucket penyimpanan                         |
+| `DEMO_MODE`                            | Penanda mode demo                               |
+
+Konfigurasi Supabase belum diperlukan untuk menampilkan route publik. Route terlindungi akan gagal secara aman dengan pesan konfigurasi yang dapat ditindaklanjuti ketika variabel wajib belum tersedia.
+
+### Database Setup
+
+```bash
+pnpm db:generate
+pnpm db:migrate
+pnpm db:seed
+```
+
+Perintah database disediakan sebagai kontrak scaffold. Jalankan setelah schema domain, migrasi, dan lingkungan Supabase pengembangan tersedia.
+
+### Run Locally
+
+```bash
 pnpm dev
 ```
 
-Buka `http://localhost:3000`. Aplikasi publik dapat dibangun tanpa kredensial Supabase. Rute terlindungi akan dialihkan ke halaman masuk dengan pesan konfigurasi sampai Supabase tersedia.
+Buka [http://localhost:3000](http://localhost:3000). Untuk build produksi, gunakan `pnpm build` lalu `pnpm start`.
+
+## Penggunaan
+
+### Pengguna Umum
+
+Route publik yang dapat diperiksa pada scaffold:
+
+- `/`
+- `/cek-harga`
+- `/produk/[slug]`
+- `/kulakan-bareng`
+- `/kulakan-bareng/[id]`
+- `/cara-kerja`
+- `/privasi`
+- `/masuk`
+
+Route akan menampilkan status yang jujur apabila fitur bisnisnya belum tersedia.
+
+### Pengguna Terautentikasi
+
+Route berikut sudah memiliki batas akses fail-closed, tetapi belum memiliki antarmuka autentikasi atau perilaku domain:
+
+- `/lapor-harga`
+- `/lapor-harga/sukses`
+- `/aktivitas`
+- `/passport`
+
+### Admin
+
+`/admin` disediakan sebagai route shell. Otorisasi admin dan operasi admin belum diimplementasikan.
+
+## Dokumentasi API
+
+Endpoint yang tersedia pada scaffold adalah `GET /api/health`.
 
 ```bash
-pnpm check
-pnpm test:e2e
+curl http://localhost:3000/api/health
 ```
 
-## Penggunaan scaffold
+Contoh respons lokal tanpa konfigurasi layanan:
 
-1. Buka beranda untuk melihat tesis produk dan status MVP.
-2. Buka `/cek-harga`, `/produk/minyak-goreng-1-l`, atau `/kulakan-bareng` untuk memeriksa shell publik.
-3. Buka `/api/health` untuk melihat versi dan status konfigurasi layanan tanpa secret.
-4. Ikuti [CONTRIBUTING.md](CONTRIBUTING.md) sebelum mengerjakan slice fitur.
+```json
+{
+  "data": {
+    "status": "ok",
+    "version": "0.1.0",
+    "services": {
+      "database": false,
+      "supabase": false,
+      "storage": false
+    }
+  }
+}
+```
 
-## Dokumentasi
+Kontrak API menggunakan `ApiSuccess<T>` untuk respons sukses dan `ApiFailure` untuk respons gagal. Endpoint bisnis belum dibuat pada milestone ini.
 
-- [Persyaratan kompetisi](docs/competition-requirements.md)
-- [Arsitektur](docs/architecture.md)
-- [Workflow tiga anggota](docs/team-workflow.md)
-- [Schema dan migrasi](docs/architecture.md#data-dan-migrasi)
-- [Lingkungan dan adapter](docs/architecture.md#kontrak-lingkungan)
-- [Kontrak API](docs/architecture.md#kontrak-api)
-- [Pengujian](CONTRIBUTING.md#pemeriksaan-wajib)
-- [Privasi](docs/privacy.md)
-- [Metodologi](docs/methodology.md)
-- [Penggunaan AI](docs/ai-usage.md)
-- [Demo dan deployment](docs/demo-script.md)
-- [Progress](docs/progress.md)
-- [Lisensi MIT](LICENSE)
+## Testing
 
-Screenshot dan URL deployment akan ditambahkan setelah UI produk dan lingkungan hosting tersedia. Instruksi submission ada pada [tracker kompetisi](docs/competition-requirements.md#checklist-submission).
+```bash
+pnpm test
+pnpm test:coverage
+pnpm test:e2e
+pnpm check
+```
+
+`pnpm check` menjalankan Prettier, ESLint, TypeScript, Vitest, dan production build. Playwright memeriksa seluruh route shell pada viewport desktop dan mobile 360px.
+
+## Lisensi
+
+Proyek ini dilisensikan di bawah [MIT License](LICENSE).
+
+## Dokumentasi Lanjutan
+
+- [AGENTS.md](AGENTS.md): aturan kontribusi untuk coding agent dan engineering handbook ringkas.
+- [CONTRIBUTING.md](CONTRIBUTING.md): alur clone sampai pull request untuk kontributor manusia.
+- [docs/competition-requirements.md](docs/competition-requirements.md): tracker persyaratan submission dan penilaian ITECHNO CUP 2026.
+- [docs/architecture.md](docs/architecture.md): batas arsitektur, akses, dan data.
+- [docs/methodology.md](docs/methodology.md): metodologi Harga Wajar yang direncanakan.
+- [docs/privacy.md](docs/privacy.md): aturan privasi dan data sensitif.
+- [docs/ai-usage.md](docs/ai-usage.md): catatan penggunaan AI dan review manusia.
+- [docs/demo-script.md](docs/demo-script.md): kerangka demonstrasi dan presentasi.
+- [docs/progress.md](docs/progress.md): status implementasi dan pekerjaan berikutnya.
