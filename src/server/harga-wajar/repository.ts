@@ -9,6 +9,7 @@ import {
   packagingOptions,
   priceReports,
   products,
+  receiptObjects,
   warungs,
 } from "@/db/schema";
 import {
@@ -474,12 +475,31 @@ export async function submitPriceReport(input: {
         ? "ANOMALOUS_PRICE"
         : null;
 
+    let receiptObjectId: string | null = null;
+    if (input.report.receiptPath && input.report.receiptMimeType && input.report.receiptSizeBytes) {
+      const [receiptRow] = await db
+        .insert(receiptObjects)
+        .values({
+          ownerAuthUserId: input.authUserId,
+          storagePath: input.report.receiptPath,
+          mimeType: input.report.receiptMimeType,
+          sizeBytes: input.report.receiptSizeBytes,
+          retentionUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year retention
+        })
+        .returning();
+      
+      if (receiptRow) {
+        receiptObjectId = receiptRow.id;
+      }
+    }
+
     const [created] = await db
       .insert(priceReports)
       .values({
         warungId: warung.id,
         productId: input.report.productId,
         packagingOptionId: input.report.packagingOptionId,
+        receiptObjectId: receiptObjectId,
         observedDate: input.report.observedDate,
         quantityPackages: input.report.quantityPackages,
         unitsPerPackage: context.unitsPerPackage,

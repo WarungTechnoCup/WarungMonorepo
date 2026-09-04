@@ -11,6 +11,7 @@ import {
 } from "@/components/location-selector";
 import { fetchApi } from "@/lib/api-client";
 import { formatRupiah } from "@/lib/format";
+import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 import type { PriceReportResultDto, ProductDto } from "@/types/harga-wajar";
 
 interface PriceReportFormProps {
@@ -41,6 +42,7 @@ export function PriceReportForm({ initialProductId }: PriceReportFormProps) {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const idempotencyKey = useRef<string | null>(null);
 
   const selectedProduct = useMemo(
@@ -120,6 +122,43 @@ export function PriceReportForm({ initialProductId }: PriceReportFormProps) {
     const requestIdempotencyKey = idempotencyKey.current ?? crypto.randomUUID();
     idempotencyKey.current = requestIdempotencyKey;
     try {
+      let receiptPath: string | undefined;
+      let receiptMimeType: string | undefined;
+      let receiptSizeBytes: number | undefined;
+
+      if (receiptFile) {
+        const supabase = createSupabaseBrowserClient();
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        
+        if (sessionError || !sessionData.session) {
+          throw new Error("Gagal mengunggah struk: Sesi tidak valid. Silakan masuk kembali.");
+        }
+
+        const user = sessionData.session.user;
+        const fileExtension = receiptFile.name.split('.').pop();
+        const fileName = `${crypto.randomUUID()}.${fileExtension}`;
+        const filePath = `${user.id}/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("receipts")
+          .upload(filePath, receiptFile);
+
+        if (uploadError) {
+          throw new Error(`Gagal mengunggah struk: ${uploadError.message}`);
+        }
+
+        receiptPath = filePath;
+        receiptMimeType = receiptFile.type;
+        receiptSizeBytes = receiptFile.size;
+      }
+
+      const requestPayload = {
+        ...payload(),
+        receiptPath,
+        receiptMimeType,
+        receiptSizeBytes,
+      };
+
       const result = await fetchApi<PriceReportResultDto>(
         "/api/price-reports",
         {
@@ -128,7 +167,7 @@ export function PriceReportForm({ initialProductId }: PriceReportFormProps) {
             "Content-Type": "application/json",
             "Idempotency-Key": requestIdempotencyKey,
           },
-          body: JSON.stringify(payload()),
+          body: JSON.stringify(requestPayload),
         },
       );
       const parameters = new URLSearchParams({
@@ -412,10 +451,35 @@ export function PriceReportForm({ initialProductId }: PriceReportFormProps) {
                 kebijakan privasi versi 1.0.0.
               </span>
             </label>
-            <p className="text-ink-muted mt-4 text-sm">
-              Unggah struk belum diaktifkan sampai kebijakan penyimpanan privat
-              dan penghapusan lolos pengujian akses lintas pengguna.
-            </p>
+            <div className="mt-6">
+              <label className="text-ink text-sm font-semibold block mb-2" htmlFor="receipt-file">
+                Bukti Struk (Opsional)
+              </label>
+              <input
+                id="receipt-file"
+                type="file"
+                accept="image/jpeg, image/png, image/webp"
+                className="block w-full text-sm text-ink-muted file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-accent/10 file:text-accent hover:file:bg-accent/20 cursor-pointer"
+                onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (file) {
+                    if (file.size > 5 * 1024 * 1024) {
+                      setError("Ukuran struk maksimal 5MB.");
+                      setReceiptFile(null);
+                      event.target.value = "";
+                    } else {
+                      setError(null);
+                      setReceiptFile(file);
+                    }
+                  } else {
+                    setReceiptFile(null);
+                  }
+                }}
+              />
+              <p className="text-ink-muted mt-2 text-xs">
+                Format yang didukung: JPG, PNG, WEBP. Maksimal 5MB.
+              </p>
+            </div>
           </div>
         ) : null}
 

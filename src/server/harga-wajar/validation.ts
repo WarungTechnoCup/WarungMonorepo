@@ -17,6 +17,9 @@ export const priceReportInputSchema = z.object({
   city: z.string().trim().min(2).max(80),
   district: z.string().trim().min(2).max(80),
   aggregationConsent: z.literal(true),
+  receiptPath: z.string().optional(),
+  receiptMimeType: z.string().optional(),
+  receiptSizeBytes: z.number().int().positive().optional(),
 });
 
 export type PriceReportInput = z.infer<typeof priceReportInputSchema>;
