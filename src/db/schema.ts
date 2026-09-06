@@ -26,6 +26,16 @@ export const consentPurposeEnum = pgEnum("consent_purpose", [
   "anonymous_aggregation",
   "receipt_storage",
 ]);
+export const opportunityStatusEnum = pgEnum("opportunity_status", [
+  "DRAFT",
+  "OPEN",
+  "TARGET_REACHED",
+  "QUOTE_REQUESTED",
+  "QUOTE_RECEIVED",
+  "ACCEPTED",
+  "FULFILLED",
+  "CANCELLED",
+]);
 
 export const warungs = pgTable(
   "warungs",
@@ -288,4 +298,82 @@ export const auditEvents = pgTable(
   (table) => [
     index("audit_events_entity_idx").on(table.entityType, table.entityId),
   ],
+);
+
+export const buyingOpportunities = pgTable(
+  "buying_opportunities",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    productId: uuid("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "restrict" }),
+    packagingOptionId: uuid("packaging_option_id")
+      .notNull()
+      .references(() => packagingOptions.id, { onDelete: "restrict" }),
+    province: text("province").notNull(),
+    city: text("city").notNull(),
+    district: text("district").notNull(),
+    targetQuantityPackages: integer("target_quantity_packages").notNull(),
+    targetPriceIdr: integer("target_price_idr").notNull(),
+    deadline: timestamp("deadline", { withTimezone: true }).notNull(),
+    status: opportunityStatusEnum("status").notNull().default("OPEN"),
+    organizerName: text("organizer_name").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    index("opportunities_area_idx").on(
+      table.province,
+      table.city,
+      table.district,
+      table.status,
+    ),
+  ],
+);
+
+export const buyingCommitments = pgTable(
+  "buying_commitments",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    opportunityId: uuid("opportunity_id")
+      .notNull()
+      .references(() => buyingOpportunities.id, { onDelete: "cascade" }),
+    warungId: uuid("warung_id")
+      .notNull()
+      .references(() => warungs.id, { onDelete: "restrict" }),
+    quantityPackages: integer("quantity_packages").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("buying_commitments_opportunity_warung_idx").on(
+      table.opportunityId,
+      table.warungId,
+    ),
+  ],
+);
+
+export const supplierQuotes = pgTable(
+  "supplier_quotes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    opportunityId: uuid("opportunity_id")
+      .notNull()
+      .references(() => buyingOpportunities.id, { onDelete: "cascade" }),
+    supplierName: text("supplier_name").notNull(),
+    unitPriceIdr: integer("unit_price_idr").notNull(),
+    deliveryFeeIdr: integer("delivery_fee_idr").notNull().default(0),
+    minimumQuantityPackages: integer("minimum_quantity_packages").notNull(),
+    validUntil: timestamp("valid_until", { withTimezone: true }).notNull(),
+    terms: text("terms").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [index("supplier_quotes_opportunity_idx").on(table.opportunityId)],
 );
