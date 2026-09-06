@@ -12,8 +12,19 @@ async function createDemoUser() {
   const password = process.env.E2E_DEMO_PASSWORD;
 
   if (!supabaseUrl || !serviceRoleKey || !email || !password) {
+    // Naming only the missing variables saves the reader from checking four
+    // when a single one is blank.
+    const missing = Object.entries({
+      NEXT_PUBLIC_SUPABASE_URL: supabaseUrl,
+      SUPABASE_SERVICE_ROLE_KEY: serviceRoleKey,
+      E2E_DEMO_EMAIL: email,
+      E2E_DEMO_PASSWORD: password,
+    })
+      .filter(([, value]) => !value)
+      .map(([key]) => key);
+
     console.error(
-      "Error: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, E2E_DEMO_EMAIL, dan E2E_DEMO_PASSWORD harus diisi di .env.local.",
+      `Error: ${missing.join(", ")} belum diisi. Lengkapi di .env atau .env.local, lalu jalankan ulang.`,
     );
     process.exit(1);
   }
