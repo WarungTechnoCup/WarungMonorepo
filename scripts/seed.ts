@@ -1,3 +1,5 @@
+import "./load-env";
+
 import { createDatabaseConnection } from "../src/db/client";
 import {
   benchmarks,

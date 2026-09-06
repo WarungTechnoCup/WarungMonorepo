@@ -15,8 +15,8 @@
     "test:e2e": "playwright test",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:seed": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/seed.ts",
-    "db:create-demo-user": "tsx --env-file-if-exists=.env --env-file-if-exists=.env.local scripts/create-demo-user.ts",
+    "db:seed": "tsx scripts/seed.ts",
+    "db:create-demo-user": "tsx scripts/create-demo-user.ts",
     "check": "prettier --check . && eslint . && tsc --noEmit && vitest run && next build"
   },
   "dependencies": {

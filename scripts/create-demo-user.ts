@@ -1,3 +1,5 @@
+import "./load-env";
+
 import { createClient } from "@supabase/supabase-js";
 import { createDatabaseConnection } from "../src/db/client";
 import { warungs } from "../src/db/schema";
