@@ -1,31 +1,46 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
+
+/**
+ * Network status is external state owned by the browser, not by React, so it
+ * is read through a store subscription rather than mirrored into an effect.
+ * The server snapshot assumes online, because navigator is not available
+ * while rendering and an offline banner must never appear in static output.
+ */
+function subscribeToNetwork(onChange: () => void) {
+  window.addEventListener("online", onChange);
+  window.addEventListener("offline", onChange);
+
+  return () => {
+    window.removeEventListener("online", onChange);
+    window.removeEventListener("offline", onChange);
+  };
+}
+
+function getNetworkSnapshot() {
+  return !navigator.onLine;
+}
+
+function getServerNetworkSnapshot() {
+  return false;
+}
 
 export function ServiceWorkerManager() {
-  const [offline, setOffline] = useState(false);
+  const offline = useSyncExternalStore(
+    subscribeToNetwork,
+    getNetworkSnapshot,
+    getServerNetworkSnapshot,
+  );
   const [waiting, setWaiting] = useState<ServiceWorker | null>(null);
   const updateAccepted = useRef(false);
   const reloading = useRef(false);
-
-  useEffect(() => {
-    setOffline(!navigator.onLine);
-
-    function goOnline() {
-      setOffline(false);
-    }
-    function goOffline() {
-      setOffline(true);
-    }
-
-    window.addEventListener("online", goOnline);
-    window.addEventListener("offline", goOffline);
-
-    return () => {
-      window.removeEventListener("online", goOnline);
-      window.removeEventListener("offline", goOffline);
-    };
-  }, []);
 
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
