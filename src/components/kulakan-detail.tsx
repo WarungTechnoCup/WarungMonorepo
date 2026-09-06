@@ -35,6 +35,17 @@ type OpportunityDetail = {
   quotes: Quote[];
 };
 
+const opportunityStatusLabels: Record<string, string> = {
+  DRAFT: "Draf",
+  OPEN: "Terbuka",
+  TARGET_REACHED: "Target tercapai",
+  QUOTE_REQUESTED: "Penawaran diminta",
+  QUOTE_RECEIVED: "Penawaran tersedia",
+  ACCEPTED: "Penawaran diterima",
+  FULFILLED: "Selesai",
+  CANCELLED: "Dibatalkan",
+};
+
 export function KulakanDetail({ id }: { id: string }) {
   const [opportunity, setOpportunity] = useState<OpportunityDetail | null>(
     null,
@@ -47,9 +58,9 @@ export function KulakanDetail({ id }: { id: string }) {
 
   const fetchDetail = (showLoading = false) => {
     if (showLoading) setLoading(true);
-    fetchApi<{ data: OpportunityDetail }>(`/api/buying-opportunities/${id}`)
-      .then((res) => {
-        setOpportunity(res.data);
+    fetchApi<OpportunityDetail>(`/api/buying-opportunities/${id}`)
+      .then((data) => {
+        setOpportunity(data);
         setError(null);
       })
       .catch((err: unknown) => {
@@ -80,10 +91,11 @@ export function KulakanDetail({ id }: { id: string }) {
     try {
       await fetchApi(`/api/buying-opportunities/${id}/commitments`, {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ quantityPackages: commitQuantity }),
       });
       setSuccess("Komitmen berhasil ditambahkan!");
-      fetchDetail(true); // Refresh data
+      fetchDetail(true);
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Gagal menyimpan komitmen.",
@@ -103,7 +115,7 @@ export function KulakanDetail({ id }: { id: string }) {
     );
   }
 
-  if (error || !opportunity) {
+  if (!opportunity) {
     return (
       <div className="page-shell py-14 sm:py-20">
         <div className="border-danger/30 bg-danger/5 text-ink rounded-3xl border p-6">
@@ -149,7 +161,7 @@ export function KulakanDetail({ id }: { id: string }) {
                     : "bg-ink/10 text-ink"
             }`}
           >
-            {opportunity.status}
+            {opportunityStatusLabels[opportunity.status] ?? opportunity.status}
           </span>
           <span className="text-ink-muted text-sm">
             {opportunity.district}, {opportunity.city}
@@ -197,7 +209,7 @@ export function KulakanDetail({ id }: { id: string }) {
 
           <section className="border-ink/12 bg-paper rounded-2xl border p-5">
             <h2 className="text-ink mb-4 text-xl font-semibold">
-              Harga Target & Penawaran
+              Harga target dan penawaran
             </h2>
 
             <div className="mb-6">
@@ -213,7 +225,7 @@ export function KulakanDetail({ id }: { id: string }) {
             {opportunity.quotes.length > 0 ? (
               <div>
                 <h3 className="text-ink mb-3 font-semibold">
-                  Penawaran Supplier Terkumpul:
+                  Penawaran pemasok tersedia
                 </h3>
                 <div className="space-y-3">
                   {opportunity.quotes.map((quote) => (
@@ -281,7 +293,7 @@ export function KulakanDetail({ id }: { id: string }) {
             <p className="text-ink-muted mb-6 text-sm">
               Identitas warung dan hubungan laporan dengan pemasok tidak akan
               ditampilkan secara publik. Komitmen MVP ini tidak mengikat secara
-              legal hingga terms disetujui.
+              hukum hingga ketentuan disetujui.
             </p>
 
             {success ? (
@@ -303,7 +315,7 @@ export function KulakanDetail({ id }: { id: string }) {
                     htmlFor="quantity"
                     className="text-ink mb-1 block font-medium"
                   >
-                    Jumlah Komitmen ({opportunity.packagingLabel})
+                    Jumlah komitmen ({opportunity.packagingLabel})
                   </label>
                   <input
                     id="quantity"

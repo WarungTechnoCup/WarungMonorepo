@@ -138,10 +138,10 @@ export default function PrivacyPage() {
         <p className="text-ink-muted mt-3 text-sm leading-6">
           Halaman ini menjelaskan perilaku produk pada tahap sekarang, bukan
           klaim kepatuhan hukum. Kewajiban perlindungan data pribadi di
-          Indonesia masih memerlukan tinjauan hukum sebelum penggunaan
-          produksi. Penarikan persetujuan mandiri dan ekspor data belum tersedia
-          sebagai halaman kendali; sampai itu ada, permintaan diproses secara
-          manual melalui kontak tim.
+          Indonesia masih memerlukan tinjauan hukum sebelum penggunaan produksi.
+          Penarikan persetujuan mandiri dan ekspor data belum tersedia sebagai
+          halaman kendali; sampai itu ada, permintaan diproses secara manual
+          melalui kontak tim.
         </p>
       </div>
 

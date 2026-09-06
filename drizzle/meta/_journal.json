@@ -15,6 +15,13 @@
       "when": 1788674347082,
       "tag": "0001_true_hannibal_king",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1788700000000,
+      "tag": "0002_receipt_storage",
+      "breakpoints": true
     }
   ]
 }

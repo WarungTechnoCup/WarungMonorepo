@@ -6,10 +6,12 @@ import { eq } from "drizzle-orm";
 async function createDemoUser() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const email = process.env.E2E_DEMO_EMAIL;
+  const password = process.env.E2E_DEMO_PASSWORD;
 
-  if (!supabaseUrl || !serviceRoleKey) {
+  if (!supabaseUrl || !serviceRoleKey || !email || !password) {
     console.error(
-      "Error: NEXT_PUBLIC_SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY harus di-set di environment variables untuk menjalankan script ini.",
+      "Error: NEXT_PUBLIC_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, E2E_DEMO_EMAIL, dan E2E_DEMO_PASSWORD harus diisi di .env.local.",
     );
     process.exit(1);
   }
@@ -21,14 +23,10 @@ async function createDemoUser() {
     },
   });
 
-  const email = "demo@warungcekharga.com";
-  const password = "password123!";
-
   console.log(`Membuat demo user: ${email}...`);
 
   let authUserId: string;
 
-  // Cek apakah user sudah ada
   const { data: usersData, error: listError } =
     await supabaseAdmin.auth.admin.listUsers();
   if (listError) {
@@ -81,9 +79,7 @@ async function createDemoUser() {
       console.log("Profil warung demo berhasil dibuat.");
     }
 
-    console.log("Selesai. Anda dapat masuk dengan:");
-    console.log(`Email: ${email}`);
-    console.log(`Password: ${password}`);
+    console.log(`Selesai. Akun demo ${email} siap digunakan.`);
   } catch (error) {
     console.error("Gagal memasukkan profil warung:", error);
   } finally {

@@ -4,7 +4,7 @@
   <p>
     <a href="https://github.com/WarungTechnoCup/WarungMonorepo"><img src="https://img.shields.io/badge/GitHub-Repository-181717?logo=github" alt="GitHub Repository" /></a>
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="MIT License" /></a>
-    <img src="https://img.shields.io/badge/Deployment-Pending-lightgrey" alt="Deployment pending" />
+    <img src="https://img.shields.io/badge/Local_Demo-Ready-2f6b55" alt="Local demo ready" />
   </p>
   <p><strong>Submission for ITECHNO CUP 2026 - Web Development</strong></p>
   <p><strong>Tim: Garren Tanavaro</strong></p>
@@ -26,11 +26,11 @@
 
 ## Tim Pengembang
 
-| Nama            | Peran                                               | GitHub                                              |
-| --------------- | --------------------------------------------------- | --------------------------------------------------- |
-| Anggota 1       | Contribute: autentikasi, pelaporan, dan kepercayaan | Belum ditetapkan                                    |
-| Anggota 2       | Act: Kulakan Bareng, integrasi, dan kesiapan demo   | Belum ditetapkan                                    |
-| Garren Tanavaro | Act: Membangun arsitektur Group Buying (Kulakan Bareng), dari skema database, API, hingga UI, serta menyiapkan integrasi data demo      | [garrentanavaro](https://github.com/garrentanavaro) |
+| Nama            | Peran                                                                                                                              | GitHub                                              |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| Anggota 1       | Contribute: autentikasi, pelaporan, dan kepercayaan                                                                                | Belum ditetapkan                                    |
+| Anggota 2       | Act: Kulakan Bareng, integrasi, dan kesiapan demo                                                                                  | Belum ditetapkan                                    |
+| Garren Tanavaro | Act: Membangun arsitektur Group Buying (Kulakan Bareng), dari skema database, API, hingga UI, serta menyiapkan integrasi data demo | [garrentanavaro](https://github.com/garrentanavaro) |
 
 Pembagian kerja lengkap tersedia di [docs/team-workflow.md](docs/team-workflow.md).
 
@@ -42,9 +42,9 @@ Warung dan pengecer mikro membutuhkan acuan harga kulakan yang mudah dipahami ta
 
 ### Solusi
 
-Warung Cek Harga dirancang sebagai produk intelijen pengadaan komunitas. MVP akan menggabungkan Harga Wajar, kontribusi harga yang diverifikasi, dan Kulakan Bareng. Harga Wajar hanya akan ditampilkan setelah sedikitnya lima kontributor independen agar satu laporan tidak membentuk patokan publik. Produk ini mendukung SDG 8 sebagai fokus utama dan SDG 9 sebagai fokus pendukung.
+Warung Cek Harga adalah produk intelijen pengadaan komunitas. MVP menggabungkan Harga Wajar, kontribusi harga yang diverifikasi, dan Kulakan Bareng. Harga Wajar hanya ditampilkan setelah sedikitnya lima kontributor independen agar satu laporan tidak membentuk patokan publik. Produk ini mendukung SDG 8 sebagai fokus utama dan SDG 9 sebagai fokus pendukung.
 
-Milestone saat ini adalah vertical slice Harga Wajar. Struktur aplikasi dan batas akses telah berkembang menjadi katalog, benchmark berambang privasi, autentikasi, normalisasi, kontribusi harga, dan aktivitas pribadi. Migrasi dan data demo tersedia, tetapi masih harus diterapkan dan diverifikasi pada project Supabase pengembangan. Kulakan Bareng belum diimplementasikan. Lihat [docs/progress.md](docs/progress.md) untuk status terkini.
+MVP saat ini mencakup katalog, benchmark berambang privasi, autentikasi, normalisasi, kontribusi harga, unggah struk privat, aktivitas pengguna, serta daftar, detail, penawaran pemasok, dan komitmen Kulakan Bareng. Migrasi dan data demo telah diverifikasi pada project Supabase pengembangan. Lihat [docs/progress.md](docs/progress.md) untuk status terkini dan batas fitur preview.
 
 ### Tujuan
 
@@ -54,25 +54,29 @@ Milestone saat ini adalah vertical slice Harga Wajar. Struktur aplikasi dan bata
 
 ## Fitur Unggulan
 
-| Fitur                          | Tujuan                                                           | Status saat ini                                                     |
-| ------------------------------ | ---------------------------------------------------------------- | ------------------------------------------------------------------- |
-| Harga Wajar                    | Menampilkan benchmark harga setelah ambang kontributor terpenuhi | Diimplementasikan, menunggu verifikasi database pengembangan        |
-| Kontribusi harga terverifikasi | Mengumpulkan laporan harga dengan perlindungan privasi           | Normalisasi dan laporan tersedia; unggah struk masih dinonaktifkan  |
-| Kulakan Bareng                 | Membantu pembelian bersama berdasarkan minat dan komitmen        | Scaffold, domain belum diimplementasikan                            |
-| Warung Passport                | Pratinjau terbatas untuk data sensitif dan bukti kepercayaan     | Route terlindungi tersedia, perilaku produk belum diimplementasikan |
-| Batas akses aman               | Memisahkan route publik, terlindungi, dan admin                  | Diimplementasikan pada tingkat scaffold                             |
+| Fitur                          | Tujuan                                                           | Status saat ini                                                  |
+| ------------------------------ | ---------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Harga Wajar                    | Menampilkan benchmark harga setelah ambang kontributor terpenuhi | Diimplementasikan dengan data demo tersimpan                     |
+| Kontribusi harga terverifikasi | Mengumpulkan laporan harga dengan perlindungan privasi           | Normalisasi, laporan, consent, aktivitas, dan struk privat aktif |
+| Kulakan Bareng                 | Membantu pembelian bersama berdasarkan minat dan komitmen        | Daftar, detail, penawaran, dan komitmen diimplementasikan        |
+| Warung Passport                | Pratinjau terbatas untuk data sensitif dan bukti kepercayaan     | Preview terbatas, bukan credit score atau keputusan pinjaman     |
+| Batas akses aman               | Memisahkan route publik, terlindungi, dan admin                  | Diterapkan pada proxy, API, database, dan storage                |
 
-Route yang belum memiliki perilaku produk ditandai sebagai scaffolded. Tombol pada route tersebut tidak menyatakan bahwa proses backend telah berjalan.
+Route admin, Passport, dan offline yang belum memiliki perilaku produk lengkap tetap ditandai sebagai scaffold agar tidak dianggap sebagai fitur produksi.
 
 ## Demo dan Screenshot
 
 ### Live Demo
 
-Belum tersedia. Hosting Vercel akan dikonfigurasi setelah aplikasi memiliki fitur produk dan lingkungan Supabase pengembangan.
+Demo lokal siap dijalankan dengan langkah pada bagian instalasi. URL produksi harus ditambahkan di sini dan diuji pada browser bersih sebelum submission.
 
 ### Screenshot
 
-Belum tersedia. Screenshot desktop dan mobile akan ditambahkan setelah UI produk selesai. Statusnya dicatat di [docs/progress.md](docs/progress.md).
+![Beranda desktop](docs/screenshots/beranda-desktop.png)
+
+![Harga Wajar pada viewport 360px](docs/screenshots/harga-wajar-mobile.png)
+
+![Kulakan Bareng desktop](docs/screenshots/kulakan-bareng-desktop.png)
 
 ### Video Demo
 
@@ -91,14 +95,14 @@ Belum tersedia. Video akan dibuat untuk presentasi final setelah alur Harga Waja
 
 ### Backend dan Data
 
-| Teknologi           | Fungsi                                                  |
-| ------------------- | ------------------------------------------------------- |
-| Node.js 24          | Runtime pengembangan dan produksi                       |
-| Supabase PostgreSQL | Database aplikasi yang akan digunakan                   |
-| Supabase Auth       | Adapter autentikasi email dan kata sandi yang disiapkan |
-| Supabase Storage    | Adapter penyimpanan bukti yang disiapkan                |
-| Drizzle ORM         | Definisi schema dan migrasi SQL yang dapat ditinjau     |
-| Zod                 | Validasi pada batas write saat endpoint bisnis dibuat   |
+| Teknologi           | Fungsi                                              |
+| ------------------- | --------------------------------------------------- |
+| Node.js 24          | Runtime pengembangan dan produksi                   |
+| Supabase PostgreSQL | Database aplikasi dan data demo terstruktur         |
+| Supabase Auth       | Autentikasi email dan kata sandi                    |
+| Supabase Storage    | Penyimpanan struk privat dengan kebijakan pemilik   |
+| Drizzle ORM         | Definisi schema dan migrasi SQL yang dapat ditinjau |
+| Zod                 | Validasi pada setiap batas write                    |
 
 ### DevOps dan Quality Gate
 
@@ -109,7 +113,7 @@ Belum tersedia. Video akan dibuat untuk presentasi final setelah alur Harga Waja
 | Playwright          | Pengujian alur route pada desktop dan viewport 360px |
 | ESLint dan Prettier | Konsistensi kode                                     |
 | GitHub Actions      | Continuous integration untuk quality gate dan E2E    |
-| Vercel              | Target deployment yang direncanakan                  |
+| Vercel              | Target deployment produksi                           |
 
 ### Alasan Pemilihan Teknologi
 
@@ -156,7 +160,7 @@ Adapter Supabase
 Drizzle schema dan migrasi SQL
 ```
 
-Adapter dan kontrak lingkungan tersedia, tetapi belum ada project Supabase, tabel domain, atau migrasi domain yang diterapkan. Detail keputusan arsitektur tersedia di [docs/architecture.md](docs/architecture.md).
+Project Supabase pengembangan, tabel domain, RLS, storage privat, migrasi, dan data demo telah diterapkan. Detail keputusan arsitektur tersedia di [docs/architecture.md](docs/architecture.md).
 
 ### Database Schema
 
@@ -170,10 +174,9 @@ src/
   components/       # Komponen antarmuka bersama
   db/               # Entry point Drizzle
   lib/              # Env, Supabase, dan utilitas bersama
-  test/             # Kontrak dan helper pengujian
+  test/             # Helper pengujian
   types/            # Tipe API bersama
-tests/              # Pengujian unit dan kontrak
-e2e/                # Pengujian Playwright
+tests/e2e/          # Pengujian Playwright desktop dan mobile
 docs/               # Dokumen kompetisi, arsitektur, dan workflow tim
 docs/decisions/     # Architecture Decision Records
 docs/source/        # Salinan spesifikasi Markdown
@@ -217,10 +220,13 @@ Isi `.env.local` sesuai kebutuhan lingkungan. Jangan pernah memasukkan nilai rah
 | `NEXT_PUBLIC_SUPABASE_URL`             | URL project Supabase                            |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | Publishable key Supabase untuk browser          |
 | `DATABASE_URL`                         | Connection string transaction pooler PostgreSQL |
-| `SUPABASE_STORAGE_BUCKET`              | Nama bucket penyimpanan                         |
+| `SUPABASE_STORAGE_BUCKET`              | Nama bucket struk privat, default `receipts`    |
+| `SUPABASE_SERVICE_ROLE_KEY`            | Khusus script pembuatan akun demo, server only  |
 | `DEMO_MODE`                            | Penanda mode demo                               |
+| `E2E_DEMO_EMAIL`                       | Email akun demo lokal dan E2E                   |
+| `E2E_DEMO_PASSWORD`                    | Kata sandi akun demo lokal dan E2E              |
 
-Konfigurasi Supabase belum diperlukan untuk menampilkan route publik. Route terlindungi akan gagal secara aman dengan pesan konfigurasi yang dapat ditindaklanjuti ketika variabel wajib belum tersedia.
+Konfigurasi Supabase diperlukan untuk data live dan route terlindungi. Tanpa konfigurasi, build tetap berhasil dan route terlindungi gagal secara aman dengan pesan yang dapat ditindaklanjuti.
 
 ### Database Setup
 
@@ -228,9 +234,10 @@ Konfigurasi Supabase belum diperlukan untuk menampilkan route publik. Route terl
 pnpm db:generate
 pnpm db:migrate
 pnpm db:seed
+pnpm db:create-demo-user
 ```
 
-Perintah database menjalankan migrasi dan seed sintetis Harga Wajar. Jalankan hanya pada project Supabase pengembangan yang telah ditinjau.
+Perintah database memuat `.env.local`, menjalankan migrasi, dan menyiapkan data sintetis Harga Wajar serta Kulakan Bareng. Pembuatan akun demo memerlukan service-role key dan kredensial demo privat. Jalankan hanya pada project Supabase pengembangan yang telah ditinjau.
 
 ### Run Locally
 
@@ -255,7 +262,7 @@ Route publik Harga Wajar:
 - `/privasi`
 - `/masuk`
 
-`/cek-harga` dan `/produk/[slug]` membaca katalog serta benchmark dari API dan database. Route Kulakan Bareng tetap menampilkan status scaffold yang jujur.
+`/cek-harga` dan `/produk/[slug]` membaca katalog serta benchmark dari API dan database. Route Kulakan Bareng menampilkan peluang aktif, progres komitmen, estimasi target, dan penawaran pemasok yang dipisahkan dari benchmark komunitas.
 
 ### Pengguna Terautentikasi
 
@@ -272,7 +279,7 @@ Route berikut memiliki batas akses fail-closed dan perilaku Harga Wajar:
 
 ## Dokumentasi API
 
-Endpoint yang tersedia meliputi health, katalog, benchmark, pratinjau normalisasi, pengiriman laporan idempotent, dan aktivitas pemilik.
+Endpoint yang tersedia meliputi health, katalog, benchmark, pratinjau normalisasi, pengiriman laporan idempotent, aktivitas pemilik, peluang Kulakan Bareng, detail peluang, dan komitmen terautentikasi.
 
 ```bash
 curl http://localhost:3000/api/health
@@ -305,7 +312,7 @@ pnpm test:e2e
 pnpm check
 ```
 
-`pnpm check` menjalankan Prettier, ESLint, TypeScript, Vitest, dan production build. Playwright memeriksa seluruh route shell pada viewport desktop dan mobile 360px.
+`pnpm check` menjalankan Prettier, ESLint, TypeScript, Vitest, dan production build. Playwright memeriksa route publik, batas autentikasi, Harga Wajar, dan Kulakan Bareng pada viewport desktop dan mobile 360px.
 
 ## Lisensi
 

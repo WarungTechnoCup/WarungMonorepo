@@ -81,7 +81,9 @@ export default function HowItWorksPage() {
             <span className="text-accent font-mono text-sm">
               {String(index + 1).padStart(2, "0")}
             </span>
-            <h3 className="text-ink mt-3 text-lg font-semibold">{step.title}</h3>
+            <h3 className="text-ink mt-3 text-lg font-semibold">
+              {step.title}
+            </h3>
             <p className="text-ink-muted mt-2 text-sm leading-6">{step.body}</p>
           </li>
         ))}
