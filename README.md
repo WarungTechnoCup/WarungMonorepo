@@ -29,7 +29,7 @@
 | Nama            | Peran                                                                                                                              | GitHub                                              |
 | --------------- | ---------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
 | Anggota 1       | Contribute: autentikasi, pelaporan, dan kepercayaan                                                                                | Belum ditetapkan                                    |
-| Alexander C.S.L       | Act: Kulakan Bareng, integrasi, dan kesiapan demo                                                                                  | [alexcsl](https://github.com/alexcsl)         |
+| Alexander C.S.L | Act: Kulakan Bareng, integrasi, dan kesiapan demo                                                                                  | [alexcsl](https://github.com/alexcsl)               |
 | Garren Tanavaro | Act: Membangun arsitektur Group Buying (Kulakan Bareng), dari skema database, API, hingga UI, serta menyiapkan integrasi data demo | [garrentanavaro](https://github.com/garrentanavaro) |
 
 Pembagian kerja lengkap tersedia di [docs/team-workflow.md](docs/team-workflow.md).
