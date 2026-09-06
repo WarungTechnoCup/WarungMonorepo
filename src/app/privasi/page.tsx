@@ -40,7 +40,6 @@ const visibility = [
   },
 ];
 
-
 export default function PrivacyPage() {
   return (
     <section className="page-shell py-14 sm:py-20">

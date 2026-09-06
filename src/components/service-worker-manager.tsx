@@ -1,10 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export function ServiceWorkerManager() {
   const [offline, setOffline] = useState(false);
   const [waiting, setWaiting] = useState<ServiceWorker | null>(null);
+  const updateAccepted = useRef(false);
+  const reloading = useRef(false);
 
   useEffect(() => {
     setOffline(!navigator.onLine);
@@ -28,10 +30,12 @@ export function ServiceWorkerManager() {
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
 
-    let reloading = false;
     function onControllerChange() {
-      if (reloading) return;
-      reloading = true;
+      // The first worker takes control through clients.claim() on a page that
+      // is already correct. Reloading then would throw the visitor out of
+      // whatever they were reading, so only reload for an accepted update.
+      if (!updateAccepted.current || reloading.current) return;
+      reloading.current = true;
       window.location.reload();
     }
 
@@ -74,6 +78,7 @@ export function ServiceWorkerManager() {
   }, []);
 
   const applyUpdate = useCallback(() => {
+    updateAccepted.current = true;
     waiting?.postMessage("SKIP_WAITING");
     setWaiting(null);
   }, [waiting]);

@@ -145,7 +145,9 @@ export function PassportPreview() {
 
       {!passport.hasProfile ? (
         <section className="border-ink/12 mt-8 rounded-3xl border p-8">
-          <h2 className="text-ink text-xl font-semibold">Belum ada aktivitas</h2>
+          <h2 className="text-ink text-xl font-semibold">
+            Belum ada aktivitas
+          </h2>
           <p className="text-ink-muted mt-3 text-sm leading-6">
             Passport terisi setelah Anda mengirim laporan harga pertama.
           </p>
