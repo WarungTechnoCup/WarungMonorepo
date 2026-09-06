@@ -96,3 +96,14 @@ export interface MethodologyDto {
   confidenceLabels: MethodologyConfidenceLabel[];
   documentationPath: string;
 }
+
+export type ConsentPurpose = "anonymous_aggregation" | "receipt_storage";
+
+export interface ConsentStateDto {
+  purpose: ConsentPurpose;
+  description: string;
+  granted: boolean;
+  policyVersion: string;
+  grantedAt: string | null;
+  withdrawnAt: string | null;
+}

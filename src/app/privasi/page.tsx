@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { ConsentControls } from "@/components/consent-controls";
 import { MINIMUM_INDEPENDENT_WARUNGS } from "@/domain/harga-wajar/types";
 
 export const metadata: Metadata = {
@@ -39,18 +40,6 @@ const visibility = [
   },
 ];
 
-const consents = [
-  {
-    name: "Agregasi anonim",
-    detail:
-      "Mengizinkan laporan Anda ikut dihitung dalam median wilayah. Tanpa persetujuan ini laporan tetap milik Anda dan tidak masuk agregat.",
-  },
-  {
-    name: "Penyimpanan struk",
-    detail:
-      "Mengizinkan penyimpanan berkas struk sebagai bukti verifikasi. Metadata EXIF dilepas sebelum disimpan.",
-  },
-];
 
 export default function PrivacyPage() {
   return (
@@ -117,19 +106,7 @@ export default function PrivacyPage() {
         Persetujuan dicatat terpisah per keperluan dan disimpan bersama
         versinya. Menarik satu persetujuan tidak membatalkan yang lain.
       </p>
-      <ul className="mt-6 grid gap-5 lg:grid-cols-2">
-        {consents.map((consent) => (
-          <li
-            className="border-ink/12 bg-paper-strong rounded-2xl border p-6"
-            key={consent.name}
-          >
-            <h3 className="text-ink text-lg font-semibold">{consent.name}</h3>
-            <p className="text-ink-muted mt-2 text-sm leading-6">
-              {consent.detail}
-            </p>
-          </li>
-        ))}
-      </ul>
+      <ConsentControls />
 
       <div className="border-ink/12 bg-paper-strong mt-14 rounded-2xl border p-6">
         <h2 className="text-ink text-xl font-semibold tracking-tight">
@@ -139,9 +116,9 @@ export default function PrivacyPage() {
           Halaman ini menjelaskan perilaku produk pada tahap sekarang, bukan
           klaim kepatuhan hukum. Kewajiban perlindungan data pribadi di
           Indonesia masih memerlukan tinjauan hukum sebelum penggunaan produksi.
-          Penarikan persetujuan mandiri dan ekspor data belum tersedia sebagai
-          halaman kendali; sampai itu ada, permintaan diproses secara manual
-          melalui kontak tim.
+          Penarikan persetujuan sudah dapat dilakukan sendiri di atas. Ekspor
+          data lengkap belum tersedia sebagai halaman kendali; sampai itu ada,
+          permintaan diproses secara manual melalui kontak tim.
         </p>
       </div>
 
