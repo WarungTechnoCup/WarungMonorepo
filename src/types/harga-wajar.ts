@@ -107,3 +107,27 @@ export interface ConsentStateDto {
   grantedAt: string | null;
   withdrawnAt: string | null;
 }
+
+export interface ModerationQueueItemDto {
+  id: string;
+  status: PriceReportStatus;
+  statusReason: string | null;
+  observedDate: string;
+  createdAt: string;
+  isDemo: boolean;
+  productName: string;
+  unitPriceIdr: number | null;
+  province: string | null;
+  city: string | null;
+  district: string | null;
+}
+
+export interface AdminAuditEventDto {
+  id: string;
+  eventType: string;
+  entityType: string;
+  entityId: string;
+  reasonCode: string | null;
+  metadata: Record<string, unknown>;
+  createdAt: string;
+}

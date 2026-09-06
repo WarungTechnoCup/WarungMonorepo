@@ -1,16 +1,28 @@
-import { ScaffoldPage } from "@/components/scaffold-page";
+import type { Metadata } from "next";
+
+import { AdminConsole } from "@/components/admin-console";
+
+export const metadata: Metadata = {
+  title: "Admin",
+  description:
+    "Moderasi laporan, pemeliharaan benchmark, dan audit log untuk operator.",
+};
 
 export default function AdminPage() {
   return (
-    <ScaffoldPage
-      description="Rute admin tersedia sebagai batas akses. Peran, audit trail, dan operasi moderasi belum diimplementasikan."
-      eyebrow="Admin"
-      plannedItems={[
-        "Verifikasi peran admin pada server dan row-level security.",
-        "Catat keputusan moderasi tanpa menyimpan data sensitif di log.",
-        "Gunakan allowlist untuk setiap data yang keluar dari antarmuka admin.",
-      ]}
-      title="Operasi internal dengan jejak audit."
-    />
+    <section className="page-shell py-14 sm:py-20">
+      <div className="max-w-3xl">
+        <p className="eyebrow">Operasi</p>
+        <h1 className="text-ink mt-4 text-4xl leading-tight font-semibold tracking-[-0.045em] text-balance sm:text-5xl">
+          Konsol moderasi dan pemeliharaan.
+        </h1>
+        <p className="text-ink-muted mt-6 text-lg leading-8">
+          Setiap tindakan pada halaman ini tercatat pada audit log beserta
+          alasannya, sehingga keputusan moderasi dapat ditinjau kembali.
+        </p>
+      </div>
+
+      <AdminConsole />
+    </section>
   );
 }

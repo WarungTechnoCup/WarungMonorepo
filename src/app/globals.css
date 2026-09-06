@@ -7,6 +7,7 @@
   --ink-muted: #61665b;
   --accent: #2f6b55;
   --accent-strong: #20513f;
+  --danger: #8c2f22;
 }
 
 @theme inline {
@@ -16,6 +17,7 @@
   --color-ink-muted: var(--ink-muted);
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
+  --color-danger: var(--danger);
   --font-sans: "Geist", "Segoe UI", Arial, sans-serif;
   --font-mono: "Geist Mono", "Cascadia Code", Consolas, monospace;
 }
