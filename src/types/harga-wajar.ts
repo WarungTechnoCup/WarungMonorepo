@@ -51,3 +51,28 @@ export interface ActivityItemDto {
   statusReason: string | null;
   createdAt: string;
 }
+
+export type OpportunityStatus =
+  | "DRAFT"
+  | "OPEN"
+  | "TARGET_REACHED"
+  | "QUOTE_REQUESTED"
+  | "QUOTE_RECEIVED"
+  | "ACCEPTED"
+  | "FULFILLED"
+  | "CANCELLED";
+
+export interface OwnCommitmentDto {
+  id: string;
+  opportunityId: string;
+  quantityPackages: number;
+  createdAt: string;
+  productName: string;
+  packagingLabel: string;
+  targetPriceIdr: number;
+  deadline: string;
+  status: OpportunityStatus;
+  organizerName: string;
+  city: string;
+  district: string;
+}

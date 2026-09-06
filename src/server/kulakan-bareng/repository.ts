@@ -210,3 +210,42 @@ export async function submitCommitment(input: {
     return created;
   });
 }
+
+export async function listOwnCommitments(authUserId: string) {
+  const db = getDatabaseClient();
+
+  const rows = await db
+    .select({
+      id: buyingCommitments.id,
+      opportunityId: buyingCommitments.opportunityId,
+      quantityPackages: buyingCommitments.quantityPackages,
+      createdAt: buyingCommitments.createdAt,
+      productName: products.name,
+      packagingLabel: packagingOptions.label,
+      targetPriceIdr: buyingOpportunities.targetPriceIdr,
+      deadline: buyingOpportunities.deadline,
+      status: buyingOpportunities.status,
+      organizerName: buyingOpportunities.organizerName,
+      city: buyingOpportunities.city,
+      district: buyingOpportunities.district,
+    })
+    .from(buyingCommitments)
+    .innerJoin(warungs, eq(buyingCommitments.warungId, warungs.id))
+    .innerJoin(
+      buyingOpportunities,
+      eq(buyingCommitments.opportunityId, buyingOpportunities.id),
+    )
+    .innerJoin(products, eq(buyingOpportunities.productId, products.id))
+    .innerJoin(
+      packagingOptions,
+      eq(buyingOpportunities.packagingOptionId, packagingOptions.id),
+    )
+    .where(eq(warungs.ownerAuthUserId, authUserId))
+    .orderBy(desc(buyingCommitments.createdAt));
+
+  return rows.map((row) => ({
+    ...row,
+    deadline: row.deadline.toISOString(),
+    createdAt: row.createdAt.toISOString(),
+  }));
+}
