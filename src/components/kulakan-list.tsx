@@ -26,6 +26,17 @@ type Opportunity = {
   committedQuantity: number;
 };
 
+const opportunityStatusLabels: Record<string, string> = {
+  DRAFT: "Draf",
+  OPEN: "Terbuka",
+  TARGET_REACHED: "Target tercapai",
+  QUOTE_REQUESTED: "Penawaran diminta",
+  QUOTE_RECEIVED: "Penawaran tersedia",
+  ACCEPTED: "Penawaran diterima",
+  FULFILLED: "Selesai",
+  CANCELLED: "Dibatalkan",
+};
+
 export function KulakanList() {
   const [area, setArea] = useState(defaultCoarseLocation);
   const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
@@ -108,7 +119,7 @@ export function KulakanList() {
                           : "bg-ink/10 text-ink"
                     }`}
                   >
-                    {opp.status}
+                    {opportunityStatusLabels[opp.status] ?? opp.status}
                   </span>
                   <span className="text-ink-muted text-xs">
                     Tenggat:{" "}
