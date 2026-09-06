@@ -76,3 +76,23 @@ export interface OwnCommitmentDto {
   city: string;
   district: string;
 }
+
+export interface MethodologyConfidenceLabel {
+  label: string;
+  minimumScore: number;
+  maximumScore: number;
+}
+
+export interface MethodologyDto {
+  normalizationVersion: string;
+  benchmarkVersion: string;
+  minimumIndependentWarungs: number;
+  landedTotalFormula: string;
+  baseUnitsFormula: string;
+  unitPriceFormula: string;
+  aggregation: string;
+  dispersion: string;
+  outlierPolicy: string;
+  confidenceLabels: MethodologyConfidenceLabel[];
+  documentationPath: string;
+}
