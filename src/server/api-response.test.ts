@@ -1,6 +1,7 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { z } from "zod";
 
+import { ConfigurationError } from "@/lib/env";
 import { apiError, ConflictError, NotFoundError } from "@/server/api-response";
 import { AuthenticationError } from "@/server/auth";
 
@@ -24,10 +25,29 @@ describe("apiError", () => {
     [new AuthenticationError(), 401, "AUTHENTICATION_REQUIRED"],
     [new NotFoundError("Produk tidak ditemukan."), 404, "NOT_FOUND"],
     [new ConflictError("Laporan tidak dapat disimpan."), 409, "CONFLICT"],
+    [
+      new ConfigurationError("DATABASE_URL belum dikonfigurasi."),
+      503,
+      "SERVICE_UNAVAILABLE",
+    ],
   ])("maps known application errors", async (error, status, code) => {
     const response = apiError(error);
 
     expect(response.status).toBe(status);
     await expect(response.json()).resolves.toMatchObject({ code });
+  });
+
+  it("logs an unrecognised error so failures are traceable", async () => {
+    const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const response = apiError(new Error("relation does not exist"));
+
+    expect(response.status).toBe(500);
+    await expect(response.json()).resolves.toMatchObject({
+      code: "INTERNAL_ERROR",
+    });
+    expect(logged).toHaveBeenCalledOnce();
+
+    logged.mockRestore();
   });
 });

@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
+import { ConfigurationError } from "@/lib/env";
 import { AuthenticationError, AuthorizationError } from "@/server/auth";
 import type { ApiFailure } from "@/types/api";
 
@@ -37,6 +38,18 @@ export function apiError(error: unknown) {
     status = 409;
     code = "CONFLICT";
     message = error.message;
+  } else if (error instanceof ConfigurationError) {
+    // A missing environment variable is an operator problem, not a bug in the
+    // request. Reporting it as 500 INTERNAL_ERROR hid the actual cause.
+    status = 503;
+    code = "SERVICE_UNAVAILABLE";
+    message = error.message;
+  }
+
+  // Anything that reached the generic branch is unexpected, and swallowing it
+  // silently left production failures with no log line to investigate.
+  if (code === "INTERNAL_ERROR") {
+    console.error(`[${requestId}] unhandled API error`, error);
   }
 
   const body: ApiFailure = { code, message, requestId, fieldErrors };
