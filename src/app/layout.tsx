@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 
 import { BottomNavigation } from "@/components/bottom-navigation";
+import { ServiceWorkerManager } from "@/components/service-worker-manager";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
@@ -40,6 +41,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         </main>
         <SiteFooter />
         <BottomNavigation />
+        <ServiceWorkerManager />
       </body>
     </html>
   );
