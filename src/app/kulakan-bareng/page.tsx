@@ -1,16 +1,12 @@
-import { ScaffoldPage } from "@/components/scaffold-page";
+import type { Metadata } from "next";
+
+import { KulakanList } from "@/components/kulakan-list";
+
+export const metadata: Metadata = {
+  title: "Kulakan Bareng",
+  description: "Daya beli tumbuh saat warung bergerak bersama.",
+};
 
 export default function GroupBuyingPage() {
-  return (
-    <ScaffoldPage
-      description="Rute ini akan menampilkan peluang pembelian bersama setelah data kebutuhan, komitmen, dan pemasok memiliki batas akses yang jelas."
-      eyebrow="Act"
-      plannedItems={[
-        "Jelajahi peluang berdasarkan wilayah dan jenis produk.",
-        "Bedakan minat awal dari komitmen pembelian.",
-        "Jaga kutipan pemasok terpisah dari benchmark komunitas.",
-      ]}
-      title="Daya beli tumbuh saat warung bergerak bersama."
-    />
-  );
+  return <KulakanList />;
 }
