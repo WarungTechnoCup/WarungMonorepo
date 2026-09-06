@@ -7,7 +7,7 @@ const publicRoutes = [
   "/cek-harga",
   "/produk/minyak-goreng-1-l",
   "/kulakan-bareng",
-  "/kulakan-bareng/scaffold-001",
+  "/kulakan-bareng/80000000-0000-4000-8000-000000000001",
   "/cara-kerja",
   "/privasi",
   "/offline",
@@ -22,7 +22,7 @@ const protectedRoutes = [
 ];
 
 for (const route of publicRoutes) {
-  test(`${route} renders an honest route shell`, async ({ page }) => {
+  test(`${route} renders without overflow`, async ({ page }) => {
     await page.goto(route);
 
     await expect(page.locator("h1").first()).toBeVisible();
@@ -51,11 +51,21 @@ for (const route of protectedRoutes) {
   });
 }
 
-test("home route has no automatically detectable accessibility violations", async ({
-  page,
-}) => {
-  await page.goto("/");
-  const results = await new AxeBuilder({ page }).analyze();
+for (const route of [
+  "/",
+  "/cek-harga",
+  "/kulakan-bareng",
+  "/cara-kerja",
+  "/privasi",
+]) {
+  test(`${route} has no automatically detectable accessibility violations`, async ({
+    page,
+  }) => {
+    await page.goto(route);
+    await expect(page.locator("h1").first()).toBeVisible();
+    await expect(page.getByRole("status")).toBeHidden();
+    const results = await new AxeBuilder({ page }).analyze();
 
-  expect(results.violations).toEqual([]);
-});
+    expect(results.violations).toEqual([]);
+  });
+}

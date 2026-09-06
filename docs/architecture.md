@@ -56,7 +56,7 @@ Do not add a service-role key to browser-prefixed variables. Secrets must remain
 
 `src/db/schema.ts` now defines the first Harga Wajar domain tables: warungs, products, packaging options, reports, normalized observations, benchmarks, consents, receipt metadata, and audit events. `src/db/client.ts` uses one lazy, process-level client through the Supabase transaction pooler with prepared statements disabled. Drizzle writes reviewable SQL to `drizzle/`.
 
-Migration `0000_spotty_surge.sql` enables RLS on every domain table, forces RLS on private tables, revokes direct access to operational records, and grants anonymous access only to active catalog data and aggregate benchmarks. A database constraint prevents median and range publication below five independent warungs.
+Migration `0000_spotty_surge.sql` establishes Harga Wajar and its RLS boundaries. Migration `0001_true_hannibal_king.sql` adds Kulakan Bareng tables, constraints, and policies. Migration `0002_receipt_storage.sql` creates the private receipt bucket and owner-scoped storage policies. A database constraint prevents median and range publication below five independent warungs.
 
 Schema changes require:
 
@@ -80,7 +80,7 @@ Report submission validates with Zod, resolves the canonical package, normalizes
 
 ## Storage and privacy
 
-Receipt storage will use a private bucket, non-guessable object paths, short-lived signed access, explicit retention, and server-side authorization. No receipt workflow may ship before row-level policies and cross-user tests pass. Passport data receives the same sensitive-data treatment.
+Receipt storage uses the private `receipts` bucket, owner-scoped object paths, explicit retention, MIME and size validation, and server-side authorization. Passport data receives the same sensitive-data treatment.
 
 ## Offline behavior
 
@@ -88,4 +88,4 @@ The manifest and `/offline` route exist. Service-worker caching is pending becau
 
 ## Deployment
 
-Vercel is the planned hosting target. Separate Supabase development and production environments will be created later. No deployment or remote resource exists in the scaffold milestone.
+Vercel is the planned hosting target. The Supabase development environment is migrated and seeded. A separate production environment and public deployment URL remain release gates.

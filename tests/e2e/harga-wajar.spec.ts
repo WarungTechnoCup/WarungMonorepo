@@ -29,6 +29,26 @@ test.describe("Harga Wajar database flow", () => {
     await expect(page.getByText("3 dari 5")).toBeVisible();
   });
 
+  test("Kulakan Bareng list opens its seeded opportunity", async ({ page }) => {
+    await page.goto("/kulakan-bareng");
+    await page.getByRole("link", { name: "Lihat Detail" }).click();
+
+    await expect(page).toHaveURL(/\/kulakan-bareng\/80000000-/);
+    await expect(
+      page.getByRole("heading", { name: "Indomie Goreng 85g", level: 1 }),
+    ).toBeVisible();
+    await expect(page.getByText(/37.*dari 50/)).toBeVisible();
+    await expect(page.getByText("Distributor Sinar Utama")).toBeVisible();
+
+    await page.getByRole("button", { name: "Berikan Komitmen" }).click();
+    await expect(
+      page.getByText("Silakan masuk untuk melanjutkan."),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "Indomie Goreng 85g", level: 1 }),
+    ).toBeVisible();
+  });
+
   test("signed-in user previews, submits, and sees a price report", async ({
     page,
   }) => {

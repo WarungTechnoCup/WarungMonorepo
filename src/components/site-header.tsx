@@ -1,4 +1,4 @@
-import { List, Storefront } from "@phosphor-icons/react/dist/ssr";
+import { Storefront } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 
 const navigation = [
@@ -36,22 +36,17 @@ export function SiteHeader() {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="flex items-center gap-2">
           <Link className="secondary-action" href="/masuk">
             Masuk
           </Link>
-          <Link className="primary-action" href="/lapor-harga">
+          <Link
+            className="primary-action hidden md:inline-flex"
+            href="/lapor-harga"
+          >
             Lapor harga
           </Link>
         </div>
-
-        <Link
-          aria-label="Buka halaman navigasi"
-          className="border-ink/15 text-ink grid size-11 place-items-center rounded-xl border md:hidden"
-          href="/cara-kerja"
-        >
-          <List aria-hidden="true" size={22} weight="bold" />
-        </Link>
       </div>
     </header>
   );

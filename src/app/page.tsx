@@ -18,7 +18,7 @@ export default function Home() {
       <section className="border-ink/10 overflow-hidden border-b">
         <div className="page-shell grid min-h-[calc(100svh-5rem)] items-center gap-12 py-16 lg:grid-cols-[1.1fr_0.9fr] lg:py-24">
           <div className="max-w-3xl">
-            <p className="eyebrow">Fondasi produk, milestone scaffold</p>
+            <p className="eyebrow">Intelijen pengadaan untuk warung</p>
             <h1 className="text-ink mt-5 text-5xl leading-[0.98] font-semibold tracking-[-0.055em] text-balance sm:text-6xl lg:text-7xl">
               Tahu harga wajar sebelum warung belanja.
             </h1>
@@ -30,7 +30,7 @@ export default function Home() {
             <div className="mt-9 flex flex-col gap-4 sm:flex-row sm:items-center">
               <Link className="primary-action" href="/cek-harga">
                 <MagnifyingGlass aria-hidden="true" size={20} weight="bold" />
-                Lihat scaffold cek harga
+                Cek harga sekarang
               </Link>
               <Link className="text-link" href="/cara-kerja">
                 Pelajari metodologi
@@ -61,10 +61,10 @@ export default function Home() {
                     Contoh status benchmark
                   </p>
                   <p className="text-ink mt-1 font-semibold">
-                    Minyak goreng 1 L
+                    Indomie Goreng 85g
                   </p>
                 </div>
-                <span className="status-chip">Scaffold</span>
+                <span className="status-chip">Data demo</span>
               </div>
               <div className="space-y-7 px-6 py-7">
                 <div>
@@ -72,20 +72,18 @@ export default function Home() {
                     <span className="text-ink-muted">
                       Kontributor independen
                     </span>
-                    <span className="text-ink font-semibold">
-                      Belum cukup data
-                    </span>
+                    <span className="text-ink font-semibold">6 dari 5</span>
                   </div>
                   <div
-                    aria-label="Data belum mencapai ambang lima kontributor"
+                    aria-label="Enam kontributor telah melewati ambang minimum lima kontributor"
                     className="bg-ink/8 h-3 overflow-hidden rounded-full"
                     role="img"
                   >
-                    <div className="bg-accent h-full w-2/5 rounded-full" />
+                    <div className="bg-accent h-full w-full rounded-full" />
                   </div>
                   <p className="text-ink-muted mt-3 text-sm leading-6">
-                    Harga acuan belum ditampilkan sebelum lima kontributor
-                    independen memenuhi pemeriksaan kepercayaan.
+                    Ambang privasi terpenuhi. Buka Harga Wajar untuk melihat
+                    median, rentang, dan tingkat keyakinan data area.
                   </p>
                 </div>
                 <div className="border-ink/10 grid grid-cols-2 gap-3 border-t pt-6">
@@ -95,7 +93,7 @@ export default function Home() {
                       className="text-accent"
                       size={24}
                     />
-                    <span>Progress, bukan angka semu</span>
+                    <span>Median tahan terhadap harga ekstrem</span>
                   </div>
                   <div className="metric-block">
                     <CheckCircle
@@ -103,7 +101,7 @@ export default function Home() {
                       className="text-accent"
                       size={24}
                     />
-                    <span>Bukti diverifikasi nanti</span>
+                    <span>Struk dapat dilampirkan secara privat</span>
                   </div>
                 </div>
               </div>

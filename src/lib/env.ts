@@ -8,7 +8,7 @@ const publicEnvironmentSchema = z.object({
 
 const serverEnvironmentSchema = publicEnvironmentSchema.extend({
   DATABASE_URL: z.string().min(1).optional(),
-  SUPABASE_STORAGE_BUCKET: z.string().min(1).default("price-receipts"),
+  SUPABASE_STORAGE_BUCKET: z.string().min(1).default("receipts"),
   DEMO_MODE: z.enum(["true", "false"]).default("false"),
 });
 
