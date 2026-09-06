@@ -237,7 +237,42 @@ pnpm db:seed
 pnpm db:create-demo-user
 ```
 
-Perintah database memuat `.env.local`, menjalankan migrasi, dan menyiapkan data sintetis Harga Wajar serta Kulakan Bareng. Pembuatan akun demo memerlukan service-role key dan kredensial demo privat. Jalankan hanya pada project Supabase pengembangan yang telah ditinjau.
+Perintah database memuat `.env` lalu `.env.local`, menjalankan migrasi, dan menyiapkan data sintetis Harga Wajar serta Kulakan Bareng. Pembuatan akun demo memerlukan service-role key. Jalankan hanya pada project Supabase pengembangan yang telah ditinjau.
+
+Urutan wajib: `db:migrate` membuat tabel, `db:seed` mengisi data contoh, lalu `db:create-demo-user` membuat akun. Menjalankan seed sebelum migrasi akan gagal karena tabel belum ada.
+
+### Akun Demo
+
+Kredensial tidak ditanam di dalam kode. `pnpm db:create-demo-user` membaca nilai berikut dari environment, lalu membuat akun Supabase dan profil warung demo di Kebon Jeruk.
+
+```bash
+E2E_DEMO_EMAIL=demo@warungcekharga.id
+E2E_DEMO_PASSWORD=WarungDemo2026!
+```
+
+Isi kedua nilai di `.env` terlebih dahulu, jalankan skrip, lalu masuk melalui [/masuk](http://localhost:3000/masuk) dengan kredensial yang sama.
+
+| Keperluan      | Nilai                                   |
+| -------------- | --------------------------------------- |
+| Email          | `demo@warungcekharga.id`                |
+| Kata sandi     | `WarungDemo2026!`                       |
+| Wilayah profil | Kebon Jeruk, Jakarta Barat, DKI Jakarta |
+
+Akun ini hanya berisi data sintetis dan ditandai sebagai data demo. Jangan gunakan kata sandi ini untuk keperluan lain.
+
+### Data Contoh yang Disiapkan
+
+`pnpm db:seed` mengisi seluruh data dengan penanda `is_demo`, sehingga dapat dihapus kembali dari konsol admin ketika `DEMO_MODE` aktif.
+
+| Isi            | Rincian                                                                                                         |
+| -------------- | --------------------------------------------------------------------------------------------------------------- |
+| Produk         | Indomie Goreng 85g dan minyak goreng, lengkap dengan opsi kemasan karton                                        |
+| Warung         | Delapan warung independen di Kebon Jeruk, cukup untuk melewati ambang lima warung                               |
+| Laporan harga  | Status `included`, `excluded`, dan `flagged`, sehingga antrean moderasi tidak kosong                            |
+| Benchmark      | Median dan IQR terhitung untuk jendela 30 dan 90 hari                                                           |
+| Kulakan Bareng | Satu peluang berstatus `QUOTE_RECEIVED` oleh Koperasi Warung Kebon Jeruk, dengan komitmen dan penawaran pemasok |
+
+Untuk melihat hasilnya, buka [/cek-harga](http://localhost:3000/cek-harga), cari `Indomie`, lalu pilih wilayah Kebon Jeruk.
 
 ### Run Locally
 
