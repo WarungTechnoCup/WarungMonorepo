@@ -9,7 +9,7 @@ async function createDemoUser() {
 
   if (!supabaseUrl || !serviceRoleKey) {
     console.error(
-      "Error: NEXT_PUBLIC_SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY harus di-set di environment variables untuk menjalankan script ini."
+      "Error: NEXT_PUBLIC_SUPABASE_URL dan SUPABASE_SERVICE_ROLE_KEY harus di-set di environment variables untuk menjalankan script ini.",
     );
     process.exit(1);
   }
@@ -29,23 +29,25 @@ async function createDemoUser() {
   let authUserId: string;
 
   // Cek apakah user sudah ada
-  const { data: usersData, error: listError } = await supabaseAdmin.auth.admin.listUsers();
+  const { data: usersData, error: listError } =
+    await supabaseAdmin.auth.admin.listUsers();
   if (listError) {
     console.error("Gagal melihat daftar user:", listError.message);
     process.exit(1);
   }
 
   const existingUser = usersData.users.find((u) => u.email === email);
-  
+
   if (existingUser) {
     console.log(`User ${email} sudah ada dengan ID: ${existingUser.id}`);
     authUserId = existingUser.id;
   } else {
-    const { data: createUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-    });
+    const { data: createUser, error: createError } =
+      await supabaseAdmin.auth.admin.createUser({
+        email,
+        password,
+        email_confirm: true,
+      });
 
     if (createError) {
       console.error("Gagal membuat demo user:", createError.message);

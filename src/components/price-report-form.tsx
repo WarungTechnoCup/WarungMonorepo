@@ -128,14 +128,17 @@ export function PriceReportForm({ initialProductId }: PriceReportFormProps) {
 
       if (receiptFile) {
         const supabase = createSupabaseBrowserClient();
-        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-        
+        const { data: sessionData, error: sessionError } =
+          await supabase.auth.getSession();
+
         if (sessionError || !sessionData.session) {
-          throw new Error("Gagal mengunggah struk: Sesi tidak valid. Silakan masuk kembali.");
+          throw new Error(
+            "Gagal mengunggah struk: Sesi tidak valid. Silakan masuk kembali.",
+          );
         }
 
         const user = sessionData.session.user;
-        const fileExtension = receiptFile.name.split('.').pop();
+        const fileExtension = receiptFile.name.split(".").pop();
         const fileName = `${crypto.randomUUID()}.${fileExtension}`;
         const filePath = `${user.id}/${fileName}`;
 
@@ -452,14 +455,17 @@ export function PriceReportForm({ initialProductId }: PriceReportFormProps) {
               </span>
             </label>
             <div className="mt-6">
-              <label className="text-ink text-sm font-semibold block mb-2" htmlFor="receipt-file">
+              <label
+                className="text-ink mb-2 block text-sm font-semibold"
+                htmlFor="receipt-file"
+              >
                 Bukti Struk (Opsional)
               </label>
               <input
                 id="receipt-file"
                 type="file"
                 accept="image/jpeg, image/png, image/webp"
-                className="block w-full text-sm text-ink-muted file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-accent/10 file:text-accent hover:file:bg-accent/20 cursor-pointer"
+                className="text-ink-muted file:bg-accent/10 file:text-accent hover:file:bg-accent/20 block w-full cursor-pointer text-sm file:mr-4 file:rounded-xl file:border-0 file:px-4 file:py-2 file:text-sm file:font-semibold"
                 onChange={(event) => {
                   const file = event.target.files?.[0];
                   if (file) {

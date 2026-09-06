@@ -476,7 +476,11 @@ export async function submitPriceReport(input: {
         : null;
 
     let receiptObjectId: string | null = null;
-    if (input.report.receiptPath && input.report.receiptMimeType && input.report.receiptSizeBytes) {
+    if (
+      input.report.receiptPath &&
+      input.report.receiptMimeType &&
+      input.report.receiptSizeBytes
+    ) {
       const [receiptRow] = await db
         .insert(receiptObjects)
         .values({
@@ -487,7 +491,7 @@ export async function submitPriceReport(input: {
           retentionUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year retention
         })
         .returning();
-      
+
       if (receiptRow) {
         receiptObjectId = receiptRow.id;
       }
