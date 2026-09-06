@@ -2,6 +2,7 @@ import { and, desc, eq, sql } from "drizzle-orm";
 
 import { getDatabaseClient } from "@/db/client";
 import {
+  auditEvents,
   buyingCommitments,
   buyingOpportunities,
   packagingOptions,
@@ -9,8 +10,16 @@ import {
   supplierQuotes,
   warungs,
 } from "@/db/schema";
+import {
+  acceptsCommitments,
+  canTransition,
+} from "@/domain/kulakan-bareng/state-machine";
 import { ConflictError, NotFoundError } from "@/server/api-response";
-import type { CommitBuyingInput } from "@/server/kulakan-bareng/validation";
+import type {
+  CommitBuyingInput,
+  SupplierQuoteInput,
+} from "@/server/kulakan-bareng/validation";
+import type { OpportunityStatus } from "@/types/harga-wajar";
 
 export async function listOpportunities(query: {
   province?: string;
@@ -164,11 +173,7 @@ export async function submitCommitment(input: {
       .limit(1);
 
     if (!opp) throw new NotFoundError("Peluang pembelian tidak ditemukan.");
-    if (
-      opp.status !== "OPEN" &&
-      opp.status !== "TARGET_REACHED" &&
-      opp.status !== "QUOTE_RECEIVED"
-    ) {
+    if (!acceptsCommitments(opp.status)) {
       throw new ConflictError(
         "Peluang pembelian ini sudah tidak menerima komitmen.",
       );
@@ -248,4 +253,99 @@ export async function listOwnCommitments(authUserId: string) {
     deadline: row.deadline.toISOString(),
     createdAt: row.createdAt.toISOString(),
   }));
+}
+
+export async function transitionOpportunity(input: {
+  actorAuthUserId: string;
+  opportunityId: string;
+  to: OpportunityStatus;
+  reasonCode?: string;
+}) {
+  const db = getDatabaseClient();
+
+  return db.transaction(async (tx) => {
+    const [opp] = await tx
+      .select()
+      .from(buyingOpportunities)
+      .where(eq(buyingOpportunities.id, input.opportunityId))
+      .limit(1);
+
+    if (!opp) throw new NotFoundError("Peluang pembelian tidak ditemukan.");
+
+    if (!canTransition(opp.status, input.to)) {
+      throw new ConflictError(
+        `Status ${opp.status} tidak dapat berpindah ke ${input.to}.`,
+      );
+    }
+
+    await tx
+      .update(buyingOpportunities)
+      .set({ status: input.to, updatedAt: new Date() })
+      .where(eq(buyingOpportunities.id, opp.id));
+
+    await tx.insert(auditEvents).values({
+      actorAuthUserId: input.actorAuthUserId,
+      eventType: "opportunity_status_changed",
+      entityType: "buying_opportunity",
+      entityId: opp.id,
+      reasonCode: input.reasonCode ?? null,
+      metadata: { from: opp.status, to: input.to },
+    });
+
+    return { id: opp.id, status: input.to };
+  });
+}
+
+export async function recordSupplierQuote(input: {
+  actorAuthUserId: string;
+  opportunityId: string;
+  quote: SupplierQuoteInput;
+}) {
+  const db = getDatabaseClient();
+
+  return db.transaction(async (tx) => {
+    const [opp] = await tx
+      .select()
+      .from(buyingOpportunities)
+      .where(eq(buyingOpportunities.id, input.opportunityId))
+      .limit(1);
+
+    if (!opp) throw new NotFoundError("Peluang pembelian tidak ditemukan.");
+
+    if (opp.status !== "QUOTE_REQUESTED" && opp.status !== "QUOTE_RECEIVED") {
+      throw new ConflictError(
+        "Penawaran hanya dapat dicatat setelah permintaan penawaran dikirim.",
+      );
+    }
+
+    const [quote] = await tx
+      .insert(supplierQuotes)
+      .values({
+        opportunityId: opp.id,
+        supplierName: input.quote.supplierName,
+        unitPriceIdr: input.quote.unitPriceIdr,
+        deliveryFeeIdr: input.quote.deliveryFeeIdr,
+        minimumQuantityPackages: input.quote.minimumQuantityPackages,
+        validUntil: new Date(input.quote.validUntil),
+        terms: input.quote.terms,
+      })
+      .returning();
+
+    if (opp.status === "QUOTE_REQUESTED") {
+      await tx
+        .update(buyingOpportunities)
+        .set({ status: "QUOTE_RECEIVED", updatedAt: new Date() })
+        .where(eq(buyingOpportunities.id, opp.id));
+    }
+
+    await tx.insert(auditEvents).values({
+      actorAuthUserId: input.actorAuthUserId,
+      eventType: "supplier_quote_recorded",
+      entityType: "buying_opportunity",
+      entityId: opp.id,
+      metadata: { supplierName: input.quote.supplierName },
+    });
+
+    return { id: quote.id, status: "QUOTE_RECEIVED" as const };
+  });
 }
