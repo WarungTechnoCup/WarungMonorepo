@@ -2,9 +2,12 @@ import { createDatabaseConnection } from "../src/db/client";
 import {
   benchmarks,
   normalizedObservations,
+  buyingCommitments,
+  buyingOpportunities,
   packagingOptions,
   priceReports,
   products,
+  supplierQuotes,
   warungs,
 } from "../src/db/schema";
 import { buildBenchmark } from "../src/domain/harga-wajar/benchmark";
@@ -304,7 +307,64 @@ async function seed() {
       }
     }
 
-    console.info("Data demo Harga Wajar berhasil disiapkan.");
+    const opportunityId = "80000000-0000-4000-8000-000000000001";
+    await db
+      .insert(buyingOpportunities)
+      .values([
+        {
+          id: opportunityId,
+          productId: productIds.noodles,
+          packagingOptionId: packageIds.noodlesCarton,
+          province,
+          city,
+          district,
+          targetQuantityPackages: 50,
+          targetPriceIdr: 2800 * 40, // Target slightly cheaper
+          deadline: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000), // In 5 days
+          status: "QUOTE_RECEIVED",
+          organizerName: "Koperasi Warung Kebon Jeruk",
+        },
+      ])
+      .onConflictDoNothing();
+
+    await db
+      .insert(buyingCommitments)
+      .values([
+        {
+          id: "90000000-0000-4000-8000-000000000001",
+          opportunityId,
+          warungId: warungRows[0]!.id,
+          quantityPackages: 20,
+        },
+        {
+          id: "90000000-0000-4000-8000-000000000002",
+          opportunityId,
+          warungId: warungRows[1]!.id,
+          quantityPackages: 17,
+        },
+      ])
+      .onConflictDoNothing();
+
+    await db
+      .insert(supplierQuotes)
+      .values([
+        {
+          id: "70000000-0000-4000-8000-000000000001",
+          opportunityId,
+          supplierName: "Distributor Sinar Utama",
+          unitPriceIdr: 2850 * 40,
+          deliveryFeeIdr: 0,
+          minimumQuantityPackages: 40,
+          validUntil: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          terms:
+            "Pembayaran tunai saat pengiriman. Minimum pemesanan 40 karton.",
+        },
+      ])
+      .onConflictDoNothing();
+
+    console.info(
+      "Data demo Harga Wajar dan Kulakan Bareng berhasil disiapkan.",
+    );
   } finally {
     await close();
   }
