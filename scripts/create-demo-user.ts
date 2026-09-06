@@ -29,6 +29,16 @@ async function createDemoUser() {
     process.exit(1);
   }
 
+  // supabase-js constructs a realtime client eagerly, which needs a global
+  // WebSocket. Node ships one from 22 onward, so on older runtimes this
+  // throws from inside the library with a stack trace that hides the cause.
+  if (typeof globalThis.WebSocket === "undefined") {
+    console.error(
+      `Error: skrip ini memerlukan Node.js 22 atau lebih baru, versi saat ini ${process.version}. Proyek ini menetapkan Node 24 pada .nvmrc. Alternatif: buat akun secara manual di Supabase Studio, menu Authentication lalu Users.`,
+    );
+    process.exit(1);
+  }
+
   const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
     auth: {
       autoRefreshToken: false,
