@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 
 import { BottomNavigation } from "@/components/bottom-navigation";
+import { DemoModeBanner } from "@/components/demo-mode-banner";
 import { ServiceWorkerManager } from "@/components/service-worker-manager";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -35,6 +36,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <a className="skip-link" href="#konten-utama">
           Lewati ke konten
         </a>
+        <DemoModeBanner />
         <SiteHeader />
         <main id="konten-utama" className="flex-1">
           {children}
