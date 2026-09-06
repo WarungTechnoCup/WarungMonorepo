@@ -199,7 +199,7 @@ export function KulakanDetail({ id }: { id: string }) {
             </div>
             <div className="bg-ink/10 h-3 w-full overflow-hidden rounded-full">
               <div
-                className="h-full bg-[var(--accent)] transition-all"
+                className="h-full bg-[var(--accent)] transition-[width] duration-500 ease-out"
                 style={{
                   width: `${Math.min(100, (opportunity.committedQuantity / opportunity.targetQuantityPackages) * 100)}%`,
                 }}

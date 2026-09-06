@@ -28,10 +28,13 @@
 
 html {
   scroll-behavior: smooth;
+  /* clip, never hidden: hidden on the root kills position: sticky. */
+  overflow-x: clip;
 }
 
 body {
   margin: 0;
+  overflow-x: clip;
   background:
     radial-gradient(circle at 84% 8%, rgb(47 107 85 / 8%), transparent 28rem),
     var(--paper);
@@ -93,6 +96,31 @@ textarea {
   gap: 0.6rem;
   font-weight: 700;
   text-decoration: none;
+  /* An affordance that wraps to two lines reads as a styling bug. Let the
+     parent row reflow instead of the label. */
+  white-space: nowrap;
+}
+
+/* Long product names and Indonesian compounds must break inside the word
+   rather than push the page sideways at 320px. */
+h1,
+h2,
+h3 {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+/* Prices are meant to be compared down a column, so digits must not jitter. */
+table,
+.numeric {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (pointer: coarse) {
+  .primary-action,
+  .secondary-action {
+    min-height: 3rem;
+  }
 }
 
 .primary-action {

@@ -62,8 +62,7 @@ export function KulakanList() {
   return (
     <div className="page-shell py-14 sm:py-20">
       <div className="max-w-3xl">
-        <p className="eyebrow">Kulakan Bareng</p>
-        <h1 className="text-ink mt-4 text-4xl font-semibold tracking-[-0.045em] sm:text-6xl">
+        <h1 className="text-ink text-4xl font-semibold tracking-[-0.045em] sm:text-6xl">
           Daya beli tumbuh saat warung bergerak bersama.
         </h1>
         <p className="text-ink-muted mt-6 text-lg leading-8">
@@ -139,7 +138,7 @@ export function KulakanList() {
                   </p>
                   <div className="bg-ink/10 h-2 w-full overflow-hidden rounded-full">
                     <div
-                      className="h-full bg-[var(--accent)] transition-all"
+                      className="h-full bg-[var(--accent)] transition-[width] duration-500 ease-out"
                       style={{
                         width: `${Math.min(100, (opp.committedQuantity / opp.targetQuantityPackages) * 100)}%`,
                       }}

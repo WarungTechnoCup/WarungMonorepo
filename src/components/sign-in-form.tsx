@@ -25,8 +25,7 @@ export function SignInForm({
   return (
     <div className="page-shell py-14 sm:py-20">
       <div className="mx-auto max-w-lg">
-        <p className="eyebrow">Akses akun</p>
-        <h1 className="text-ink mt-4 text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">
+        <h1 className="text-ink text-4xl font-semibold tracking-[-0.045em] sm:text-5xl">
           Masuk untuk melaporkan harga.
         </h1>
         <p className="text-ink-muted mt-5 leading-7">

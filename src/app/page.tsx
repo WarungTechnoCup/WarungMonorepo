@@ -113,8 +113,7 @@ export default function Home() {
       <section className="page-shell py-20">
         <div className="grid gap-10 lg:grid-cols-[0.7fr_1.3fr]">
           <div>
-            <p className="eyebrow">Ruang lingkup produk</p>
-            <h2 className="text-ink mt-4 text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
+            <h2 className="text-ink text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">
               Informasi yang berujung pada tindakan.
             </h2>
           </div>

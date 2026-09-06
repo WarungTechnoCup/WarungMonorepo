@@ -51,7 +51,7 @@ export function BenchmarkCard({ benchmark }: { benchmark: BenchmarkDto }) {
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="eyebrow">Harga wajar area</p>
-          <p className="text-ink mt-3 text-4xl font-semibold tracking-tight">
+          <p className="numeric text-ink mt-3 text-4xl font-semibold tracking-tight">
             {formatRupiah(result.medianUnitPriceIdr)}
           </p>
           <p className="text-ink-muted mt-2 text-sm">per unit dasar produk</p>
@@ -64,7 +64,7 @@ export function BenchmarkCard({ benchmark }: { benchmark: BenchmarkDto }) {
       <dl className="border-ink/10 mt-7 grid gap-5 border-t pt-6 sm:grid-cols-3">
         <div>
           <dt className="text-ink-muted text-sm">Rentang tengah</dt>
-          <dd className="text-ink mt-1 font-semibold">
+          <dd className="numeric text-ink mt-1 font-semibold">
             {formatRupiah(result.p25UnitPriceIdr)} sampai{" "}
             {formatRupiah(result.p75UnitPriceIdr)}
           </dd>

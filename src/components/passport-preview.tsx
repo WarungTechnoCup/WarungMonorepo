@@ -199,7 +199,7 @@ export function PassportPreview() {
                       key={row.label}
                     >
                       <dt className="text-ink-muted text-sm">{row.label}</dt>
-                      <dd className="text-ink text-sm font-semibold">
+                      <dd className="numeric text-ink text-sm font-semibold">
                         {row.value}
                       </dd>
                     </div>

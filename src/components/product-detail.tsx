@@ -67,8 +67,7 @@ export function ProductDetail({ slug }: { slug: string }) {
     <div className="page-shell py-14 sm:py-20">
       <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr]">
         <section>
-          <p className="eyebrow">Detail produk</p>
-          <h1 className="text-ink mt-4 text-4xl font-semibold tracking-[-0.045em] sm:text-6xl">
+          <h1 className="text-ink text-4xl font-semibold tracking-[-0.045em] sm:text-6xl">
             {product.name}
           </h1>
           <p className="text-ink-muted mt-5 text-lg leading-8">

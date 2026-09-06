@@ -59,8 +59,7 @@ export default function HowItWorksPage() {
   return (
     <section className="page-shell py-14 sm:py-20">
       <div className="max-w-3xl">
-        <p className="eyebrow">Metodologi</p>
-        <h1 className="text-ink mt-4 text-4xl leading-tight font-semibold tracking-[-0.045em] text-balance sm:text-5xl">
+        <h1 className="text-ink text-4xl leading-tight font-semibold tracking-[-0.045em] text-balance sm:text-5xl">
           Dari bukti, menjadi acuan, lalu tindakan.
         </h1>
         <p className="text-ink-muted mt-6 text-lg leading-8">
@@ -72,19 +71,18 @@ export default function HowItWorksPage() {
       <h2 className="text-ink mt-14 text-2xl font-semibold tracking-tight">
         Tiga langkah
       </h2>
-      <ol className="mt-6 grid gap-5 lg:grid-cols-3">
+      <ol className="divide-ink/10 border-ink/10 mt-8 divide-y border-y">
         {steps.map((step, index) => (
-          <li
-            className="border-ink/12 bg-paper-strong rounded-2xl border p-6"
-            key={step.title}
-          >
+          <li className="py-7" key={step.title}>
             <span className="text-accent font-mono text-sm">
               {String(index + 1).padStart(2, "0")}
             </span>
-            <h3 className="text-ink mt-3 text-lg font-semibold">
+            <h3 className="text-ink mt-2 text-xl font-semibold">
               {step.title}
             </h3>
-            <p className="text-ink-muted mt-2 text-sm leading-6">{step.body}</p>
+            <p className="text-ink-muted mt-2 max-w-2xl leading-7">
+              {step.body}
+            </p>
           </li>
         ))}
       </ol>

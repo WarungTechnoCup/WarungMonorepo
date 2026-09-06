@@ -86,8 +86,7 @@ export function ActivityList() {
     <div className="page-shell py-14 sm:py-20">
       <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
         <div>
-          <p className="eyebrow">Aktivitas Saya</p>
-          <h1 className="text-ink mt-4 text-4xl font-semibold tracking-[-0.045em] sm:text-6xl">
+          <h1 className="text-ink text-4xl font-semibold tracking-[-0.045em] sm:text-6xl">
             Riwayat kontribusi harga.
           </h1>
         </div>
@@ -117,7 +116,7 @@ export function ActivityList() {
       <div className="mt-10 space-y-4">
         {items.map((item) => (
           <article
-            className="border-ink/12 bg-paper grid gap-5 rounded-2xl border p-5 sm:grid-cols-[1fr_auto] sm:items-center"
+            className="border-ink/12 bg-paper grid gap-5 rounded-2xl border p-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
             key={item.id}
           >
             <div>
@@ -135,7 +134,7 @@ export function ActivityList() {
               ) : null}
             </div>
             <div className="sm:text-right">
-              <p className="text-ink text-xl font-semibold">
+              <p className="numeric text-ink text-xl font-semibold">
                 {formatRupiah(item.unitPriceIdr)}
               </p>
               <p className="text-ink-muted mt-1 text-xs">per unit dasar</p>
@@ -183,7 +182,7 @@ export function ActivityList() {
         <div className="mt-6 space-y-4">
           {commitments.map((commitment) => (
             <article
-              className="border-ink/12 bg-paper grid gap-5 rounded-2xl border p-5 sm:grid-cols-[1fr_auto] sm:items-center"
+              className="border-ink/12 bg-paper grid gap-5 rounded-2xl border p-5 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center"
               key={commitment.id}
             >
               <div>
@@ -207,7 +206,7 @@ export function ActivityList() {
                 </p>
               </div>
               <div className="sm:text-right">
-                <p className="text-ink text-xl font-semibold">
+                <p className="numeric text-ink text-xl font-semibold">
                   {formatRupiah(commitment.targetPriceIdr)}
                 </p>
                 <p className="text-ink-muted mt-1 text-xs">

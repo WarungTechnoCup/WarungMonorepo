@@ -44,8 +44,7 @@ export default function PrivacyPage() {
   return (
     <section className="page-shell py-14 sm:py-20">
       <div className="max-w-3xl">
-        <p className="eyebrow">Privasi</p>
-        <h1 className="text-ink mt-4 text-4xl leading-tight font-semibold tracking-[-0.045em] text-balance sm:text-5xl">
+        <h1 className="text-ink text-4xl leading-tight font-semibold tracking-[-0.045em] text-balance sm:text-5xl">
           Privasi adalah syarat produk.
         </h1>
         <p className="text-ink-muted mt-6 text-lg leading-8">
@@ -89,7 +88,7 @@ export default function PrivacyPage() {
       <dl className="divide-ink/10 border-ink/10 mt-6 divide-y border-y">
         {visibility.map((row) => (
           <div
-            className="grid gap-2 py-5 sm:grid-cols-[14rem_1fr]"
+            className="grid gap-2 py-5 sm:grid-cols-[14rem_minmax(0,1fr)]"
             key={row.who}
           >
             <dt className="text-ink text-sm font-semibold">{row.who}</dt>

@@ -92,8 +92,7 @@ export function PriceSearch() {
   return (
     <div className="page-shell py-14 sm:py-20">
       <div className="max-w-3xl">
-        <p className="eyebrow">Harga Wajar</p>
-        <h1 className="text-ink mt-4 text-4xl font-semibold tracking-[-0.045em] sm:text-6xl">
+        <h1 className="text-ink text-4xl font-semibold tracking-[-0.045em] sm:text-6xl">
           Bandingkan harga kulakan dengan data area.
         </h1>
         <p className="text-ink-muted mt-6 text-lg leading-8">
