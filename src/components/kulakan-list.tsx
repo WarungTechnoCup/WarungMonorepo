@@ -33,7 +33,9 @@ export function KulakanList() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const parameters = new URLSearchParams(area as unknown as Record<string, string>);
+    const parameters = new URLSearchParams(
+      area as unknown as Record<string, string>,
+    );
     fetchApi<Opportunity[]>(`/api/buying-opportunities?${parameters}`)
       .then((data) => {
         setOpportunities(data);
