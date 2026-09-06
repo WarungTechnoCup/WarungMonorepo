@@ -107,7 +107,7 @@ export function KulakanDetail({ id }: { id: string }) {
     return (
       <div className="page-shell py-14 sm:py-20">
         <div className="border-danger/30 bg-danger/5 text-ink rounded-3xl border p-6">
-          <h1 className="font-semibold text-xl">Terjadi kesalahan</h1>
+          <h1 className="text-xl font-semibold">Terjadi kesalahan</h1>
           <p className="text-ink-muted mt-2 text-sm">
             {error || "Peluang tidak ditemukan"}
           </p>

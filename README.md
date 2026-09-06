@@ -7,7 +7,7 @@
     <img src="https://img.shields.io/badge/Deployment-Pending-lightgrey" alt="Deployment pending" />
   </p>
   <p><strong>Submission for ITECHNO CUP 2026 - Web Development</strong></p>
-  <p><strong>Tim: Belum ditetapkan</strong></p>
+  <p><strong>Tim: Garren Tanavaro</strong></p>
 </div>
 
 ## Daftar Isi
@@ -26,13 +26,13 @@
 
 ## Tim Pengembang
 
-| Nama      | Peran                                               | GitHub           |
-| --------- | --------------------------------------------------- | ---------------- |
-| Anggota 1 | Discover: pencarian, benchmark, dan metodologi      | Belum ditetapkan |
-| Anggota 2 | Contribute: autentikasi, pelaporan, dan kepercayaan | Belum ditetapkan |
-| Anggota 3 | Act: Kulakan Bareng, integrasi, dan kesiapan demo   | Belum ditetapkan |
+| Nama            | Peran                                               | GitHub                                              |
+| --------------- | --------------------------------------------------- | --------------------------------------------------- |
+| Anggota 1       | Contribute: autentikasi, pelaporan, dan kepercayaan | Belum ditetapkan                                    |
+| Anggota 2       | Act: Kulakan Bareng, integrasi, dan kesiapan demo   | Belum ditetapkan                                    |
+| Garren Tanavaro | Act: Membangun arsitektur Group Buying (Kulakan Bareng), dari skema database, API, hingga UI, serta menyiapkan integrasi data demo      | [garrentanavaro](https://github.com/garrentanavaro) |
 
-Nama dan akun GitHub akan diisi setelah anggota tim dikonfirmasi. Pembagian kerja lengkap tersedia di [docs/team-workflow.md](docs/team-workflow.md).
+Pembagian kerja lengkap tersedia di [docs/team-workflow.md](docs/team-workflow.md).
 
 ## Tentang Proyek
 
