@@ -131,3 +131,27 @@ export interface AdminAuditEventDto {
   metadata: Record<string, unknown>;
   createdAt: string;
 }
+
+export interface PassportDto {
+  hasProfile: boolean;
+  area: { city: string; district: string } | null;
+  activeSince: string | null;
+  lastContributionAt: string | null;
+  verified: { receiptBackedReports: number };
+  reported: {
+    totalReports: number;
+    distinctProducts: number;
+    supplierTypes: number;
+  };
+  calculated: {
+    benchmarkEligibleReports: number;
+    areasContributed: number;
+  };
+  estimated: { landedTotalIdr: number; completenessPercent: number };
+  consents: ConsentStateDto[];
+  methodology: {
+    normalizationVersion: string;
+    benchmarkVersion: string;
+  };
+  generatedAt: string;
+}
