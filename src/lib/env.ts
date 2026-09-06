@@ -10,6 +10,7 @@ const serverEnvironmentSchema = publicEnvironmentSchema.extend({
   DATABASE_URL: z.string().min(1).optional(),
   SUPABASE_STORAGE_BUCKET: z.string().min(1).default("receipts"),
   DEMO_MODE: z.enum(["true", "false"]).default("false"),
+  ADMIN_EMAILS: z.string().optional(),
 });
 
 export class ConfigurationError extends Error {
@@ -33,6 +34,7 @@ export function getServerEnvironment() {
     ...getPublicEnvironment(),
     DATABASE_URL: process.env.DATABASE_URL || undefined,
     SUPABASE_STORAGE_BUCKET: process.env.SUPABASE_STORAGE_BUCKET || undefined,
+    ADMIN_EMAILS: process.env.ADMIN_EMAILS || undefined,
     DEMO_MODE: process.env.DEMO_MODE || undefined,
   });
 }
@@ -67,6 +69,15 @@ export function getDatabaseUrl() {
   return DATABASE_URL;
 }
 
+export function getAdminEmails() {
+  const { ADMIN_EMAILS } = getServerEnvironment();
+
+  return (ADMIN_EMAILS ?? "")
+    .split(",")
+    .map((entry) => entry.trim().toLowerCase())
+    .filter((entry) => entry.length > 0);
+}
+
 export function getServiceConfiguration() {
   const environment = getServerEnvironment();
   const supabaseConfigured =
@@ -78,5 +89,6 @@ export function getServiceConfiguration() {
     database: Boolean(environment.DATABASE_URL),
     storage: supabaseConfigured && Boolean(environment.SUPABASE_STORAGE_BUCKET),
     demoMode: environment.DEMO_MODE === "true",
+    administration: getAdminEmails().length > 0,
   };
 }

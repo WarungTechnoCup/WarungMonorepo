@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
   ConfigurationError,
+  getAdminEmails,
   getDatabaseUrl,
   getServiceConfiguration,
   getSupabasePublicConfig,
@@ -53,5 +54,23 @@ describe("environment contract", () => {
 
     vi.stubEnv("DATABASE_URL", "postgresql://user:password@example.com/db");
     expect(getDatabaseUrl()).toBe("postgresql://user:password@example.com/db");
+  });
+});
+
+describe("getAdminEmails", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("returns an empty list when nothing is configured", () => {
+    vi.stubEnv("ADMIN_EMAILS", "");
+
+    expect(getAdminEmails()).toEqual([]);
+  });
+
+  it("normalises case and whitespace in the configured list", () => {
+    vi.stubEnv("ADMIN_EMAILS", " Admin@Example.com , ops@example.com ,, ");
+
+    expect(getAdminEmails()).toEqual(["admin@example.com", "ops@example.com"]);
   });
 });

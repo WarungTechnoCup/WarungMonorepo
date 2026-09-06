@@ -22,6 +22,7 @@ describe("GET /api/health", () => {
           database: false,
           storage: false,
           demoMode: false,
+          administration: false,
         },
       },
     });

@@ -3,7 +3,7 @@ import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
-import { AuthenticationError } from "@/server/auth";
+import { AuthenticationError, AuthorizationError } from "@/server/auth";
 import type { ApiFailure } from "@/types/api";
 
 export class NotFoundError extends Error {}
@@ -24,6 +24,10 @@ export function apiError(error: unknown) {
   } else if (error instanceof AuthenticationError) {
     status = 401;
     code = "AUTHENTICATION_REQUIRED";
+    message = error.message;
+  } else if (error instanceof AuthorizationError) {
+    status = 403;
+    code = "FORBIDDEN";
     message = error.message;
   } else if (error instanceof NotFoundError) {
     status = 404;
