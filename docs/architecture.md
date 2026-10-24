@@ -58,6 +58,10 @@ Do not add a service-role key to browser-prefixed variables. Secrets must remain
 
 Migration `0000_spotty_surge.sql` establishes Harga Wajar and its RLS boundaries. Migration `0001_true_hannibal_king.sql` adds Kulakan Bareng tables, constraints, and policies. Migration `0002_receipt_storage.sql` creates the private receipt bucket and owner-scoped storage policies. A database constraint prevents median and range publication below five independent warungs.
 
+Migration `0003_commitment_owner_privacy.sql` replaces public individual-commitment reads with authenticated owner-only reads. Ownership checks can read only `warungs.id` and `warungs.owner_auth_user_id`, and the existing warung RLS policy limits those rows to the authenticated owner. Other profile columns remain inaccessible. Anonymous clients cannot select individual commitments. Public opportunity APIs continue to return summed quantities through the server database connection and its existing field allowlist. Organizers receive aggregates, not individual warung records.
+
+`pnpm test:db` runs real PostgreSQL role and RLS tests against a disposable local server specified by `RLS_TEST_DATABASE_URL`. The suite creates temporary databases, applies the full migration history, and verifies fresh installations and upgrades with existing commitments. It checks anonymous denial, two separate owners, a nonowner, missing identity claims, owner inserts, cross-owner insert denial, and the public aggregate API. Missing database configuration fails the command rather than skipping these checks. The local fixture supplies the Supabase `auth.uid()` claim lookup and minimal storage objects needed by the migrations; it does not verify the hosted Auth or Storage services.
+
 Schema changes require:
 
 1. team coordination for shared indexes;
