@@ -25,3 +25,7 @@ Status values: `Complete`, `In progress`, `Pending`, and `Blocked`.
 | PWA offline dan pembaruan aman                | Complete    | Act         | `feat/consent-admin-passport` | Service worker allowlist, halaman offline, banner status, dan prompt pembaruan                     | Belum diverifikasi manual di peramban           | Uji mode offline di Chrome DevTools               |
 | Kontrol persetujuan mandiri                   | Complete    | Contribute  | `feat/consent-admin-passport` | GET, POST, dan DELETE /api/consents dengan panel kendali di /privasi                               | None                                            | Tambahkan ekspor data lengkap                     |
 | Konsol admin dan moderasi                     | Complete    | Integration | `feat/consent-admin-passport` | Moderasi, hitung ulang benchmark, audit log, dan reset data contoh di balik ADMIN_EMAILS           | None                                            | Tinjau kebutuhan peran berbasis basis data        |
+
+## Commitment privacy repair
+
+The `overhaul/readiness-warung` branch adds migration `0003_commitment_owner_privacy.sql` and real PostgreSQL role regressions through `pnpm test:db`. Fresh installation and upgrade tests cover individual-record privacy and the public aggregate API. Independent review and hosted authenticated E2E remain pending.
